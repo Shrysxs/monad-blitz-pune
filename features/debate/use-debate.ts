@@ -100,6 +100,7 @@ export function useDebate() {
       const errMsg = err instanceof Error ? err.message : "Something went wrong during debate analysis.";
       setError(errMsg);
       setIsAnalyzing(false);
+      setStep("select-asset");
     }
   };
 

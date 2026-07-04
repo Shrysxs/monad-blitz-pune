@@ -1,66 +1,101 @@
-## Foundry
+# PenguinRegistry — Smart Contract
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+> Minimal on-chain registry that permanently records AI syndicate decisions on Monad.
 
-Foundry consists of:
+## Contract
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+**`PenguinRegistry.sol`** — a single-function contract that emits an immutable event every time the Penguin Protocol AI syndicate reaches consensus.
 
-## Documentation
+```solidity
+function recordDecision(
+    string calldata asset,       // e.g. "BTC"
+    string calldata decision,    // "BUY" | "SELL" | "HOLD"
+    uint256 confidence,          // 1-100
+    uint256 timestamp            // Unix epoch
+) external;
+```
 
-https://book.getfoundry.sh/
+Every call emits `DecisionRecorded(asset, decision, confidence, timestamp, sender)` — permanently verifiable on-chain.
 
-## Usage
+### Deployed Address (Monad Testnet)
+
+```
+0x60Be62dD9B3ED768dbAAc54374b03Ea2F3C52D76
+```
+
+Explorer: [testnet.monadscan.com](https://testnet.monadscan.com/address/0x60Be62dD9B3ED768dbAAc54374b03Ea2F3C52D76)
+
+---
+
+## Toolchain
+
+Built with [Foundry](https://book.getfoundry.sh/). Install it with:
+
+```bash
+curl -L https://foundry.paradigm.xyz | bash
+foundryup
+```
+
+---
+
+## Commands
 
 ### Build
 
-```shell
-$ forge build
+```bash
+cd contracts
+forge build
 ```
 
 ### Test
 
-```shell
-$ forge test
+```bash
+forge test -vv
 ```
 
 ### Format
 
-```shell
-$ forge fmt
+```bash
+forge fmt
 ```
 
-### Gas Snapshots
+### Deploy to Monad Testnet
 
-```shell
-$ forge snapshot
+Set your private key:
+
+```bash
+export PRIVATE_KEY=0x...
 ```
 
-### Anvil
+Then run the deploy script:
 
-```shell
-$ anvil
+```bash
+forge script script/Deploy.s.sol:Deploy \
+  --rpc-url https://testnet-rpc.monad.xyz \
+  --private-key $PRIVATE_KEY \
+  --broadcast \
+  -vvvv
 ```
 
-### Deploy
+After deployment, copy the printed address into [`constants/contract.ts`](../constants/contract.ts).
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+### Verify on Monadscan
+
+```bash
+forge verify-contract <DEPLOYED_ADDRESS> src/PenguinRegistry.sol:PenguinRegistry \
+  --chain-id 10143 \
+  --verifier blockscout \
+  --verifier-url https://testnet.monadscan.com/api
 ```
 
-### Cast
+---
 
-```shell
-$ cast <subcommand>
-```
+## Network Details
 
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+| Property      | Value                              |
+|---------------|------------------------------------|
+| Network       | Monad Testnet                      |
+| Chain ID      | 10143                              |
+| RPC URL       | `https://testnet-rpc.monad.xyz`    |
+| Block Explorer| `https://testnet.monadscan.com`    |
+| Currency      | MON                                |

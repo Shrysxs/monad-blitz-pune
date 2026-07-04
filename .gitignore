@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Foundry build artifacts (contracts/)
+contracts/out/
+contracts/cache/
+contracts/.env
+
+# Agent / AI dev tooling (not needed in deployment)
+.monskills
+skills-lock.json
+screenshots/
+
