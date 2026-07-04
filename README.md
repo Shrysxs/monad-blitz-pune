@@ -1,4 +1,4 @@
-# 🐧 Penguin Protocol
+# Penguin Protocol
 
 > **A decentralized AI Investment Syndicate where specialized autonomous agents debate, vote, and permanently seal consensus decisions on the Monad Blockchain.**
 
@@ -9,21 +9,22 @@
 
 ---
 
-## 📖 Table of Contents
-- [What is Penguin Protocol?](#-what-is-penguin-protocol)
-- [Product Flow & Architecture](#-product-flow--architecture)
-- [AI Syndicate & Agent Frameworks](#-ai-syndicate--agent-frameworks)
-- [Consensus Engine](#-consensus-engine)
-- [Smart Contract Specification](#-smart-contract-specification)
-- [Reputation Marketplace](#-reputation-marketplace)
-- [Tech Stack](#-tech-stack)
-- [Environment Configuration](#-environment-configuration)
-- [Local Setup & Run](#-local-setup--run)
-- [Smart Contract Deployment](#-smart-contract-deployment)
+## Table of Contents
+- [What is Penguin Protocol?](#what-is-penguin-protocol)
+- [Monad Integration and Ecosystem Benefits](#monad-integration-and-ecosystem-benefits)
+- [Product Flow & Architecture](#product-flow--architecture)
+- [AI Syndicate & Agent Frameworks](#ai-syndicate--agent-frameworks)
+- [Consensus Engine](#consensus-engine)
+- [Smart Contract Specification](#smart-contract-specification)
+- [Reputation Marketplace](#reputation-marketplace)
+- [Tech Stack](#tech-stack)
+- [Environment Configuration](#environment-configuration)
+- [Local Setup & Run](#local-setup--run)
+- [Smart Contract Deployment](#smart-contract-deployment)
 
 ---
 
-## 💡 What is Penguin Protocol?
+## What is Penguin Protocol?
 
 Real-world hedge funds and investment firms don't rely on a single voice. They form investment committees composed of macro economists, risk management officers, fundamental analysts, and momentum traders who debate, verify details, and vote. 
 
@@ -38,7 +39,22 @@ These agents:
 
 ---
 
-## 🔄 Product Flow & Architecture
+## Monad Integration and Ecosystem Benefits
+
+### How Monad is Used in the Application
+1. **Immutability of Consensus Decisions**: Instead of keeping AI consensus off-chain where it could be tampered with or retroactively altered, every completed deliberation of the five agents is permanently recorded. The application broadcasts a transaction to the `recordDecision` function on `PenguinRegistry.sol` on the Monad Testnet.
+2. **Decentralized Reputation Tracking**: Rather than relying on a centralized database to log agent success rates, the system leverages Monad's transaction history. By querying the contract logs for `DecisionRecorded` events, the app calculates running reputation and historical statistics trustlessly.
+3. **Flexible Transaction Routing**: The web application supports two modes of interaction with Monad. When a browser wallet (such as MetaMask) is connected, it requests the user to switch network to Monad Testnet (Chain ID 10143) and sign client-side. If no wallet is detected, the Next.js API automatically routes the request to a backend signer configured with a `MONAD_PRIVATE_KEY` to ensure a smooth demo experience.
+
+### Why Monad is Beneficial for This Use Case
+1. **Performance at Scale**: Running an AI investment committee creates a continuous stream of decisions. Monad's high-speed execution (10,000 TPS) ensures that transactions are processed immediately, preventing backlogs when multiple syndicates are deliberating simultaneously.
+2. **Ultra-Low Fees**: Logging detailed voting metrics on-chain on standard EVM networks can become cost-prohibitive. Monad's fee optimizations allow frequent recording of state changes, making persistent audit trails economically viable.
+3. **AI and Web3 Confluence**: As AI agents assume greater autonomy, verifying their history, decisions, and performance becomes a critical security challenge. Monad acts as a scalable truth layer, proving what the agents analyzed, what they voted for, and when they reached consensus.
+4. **Developer-Friendly EVM Compatibility**: By maintaining full bytecode compatibility, the project utilizes the exact same developer tooling (Foundry, Solidity 0.8.20, and Viem clients) to deploy and interact with Monad, shortening deployment cycles for complex Web3 integrations.
+
+---
+
+## Product Flow & Architecture
 
 The application is structured to optimize trust. Decisions are fully explainable, transparent, and publicly auditable.
 
@@ -117,7 +133,7 @@ graph TD
 
 ---
 
-## 🤖 AI Syndicate & Agent Frameworks
+## AI Syndicate & Agent Frameworks
 
 To guarantee genuine debate, every agent operates under a rigid prompt that aligns with a distinct school of financial and quantitative reasoning:
 
@@ -131,7 +147,7 @@ To guarantee genuine debate, every agent operates under a rigid prompt that alig
 
 ---
 
-## 📊 Consensus Engine
+## Consensus Engine
 
 The consensus engine translates five diverse, independent opinions into one unified recommendation (**BUY / SELL / HOLD**).
 
@@ -156,7 +172,7 @@ $$\text{Consensus Confidence} = \left( \frac{W_{\text{Recommendation}}}{\sum_{d}
 
 ---
 
-## 📜 Smart Contract Specification
+## Smart Contract Specification
 
 The smart contract is deployed on **Monad Testnet** (Chain ID: `10143`). It is a minimal, optimized registry designed to permanently record and verify syndicate decisions.
 
@@ -164,7 +180,7 @@ The smart contract is deployed on **Monad Testnet** (Chain ID: `10143`). It is a
 ```
 0x60Be62dD9B3ED768dbAAc54374b03Ea2F3C52D76
 ```
-🔗 [View Deployed Contract on Monadscan](https://testnet.monadscan.com/address/0x60Be62dD9B3ED768dbAAc54374b03Ea2F3C52D76)
+[View Deployed Contract on Monadscan](https://testnet.monadscan.com/address/0x60Be62dD9B3ED768dbAAc54374b03Ea2F3C52D76)
 
 ---
 
@@ -203,7 +219,7 @@ contract PenguinRegistry {
 
 ---
 
-## 🏛️ Reputation Marketplace
+## Reputation Marketplace
 
 Every transaction sealed via the `recordDecision` function emits an event that the application indexes in real time via standard JSON-RPC queries (`getLogs` client interface).
 
@@ -213,7 +229,7 @@ Every transaction sealed via the `recordDecision` function emits an event that t
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology | Description |
 |---|---|---|
@@ -227,7 +243,7 @@ Every transaction sealed via the `recordDecision` function emits an event that t
 
 ---
 
-## 🔒 Environment Configuration
+## Environment Configuration
 
 Create a `.env.local` file in the root directory. Add the following keys:
 
@@ -245,7 +261,7 @@ MONAD_PRIVATE_KEY=0x_your_private_key_here
 
 ---
 
-## 🚀 Local Setup & Run
+## Local Setup & Run
 
 Follow these instructions to clone and run the application locally:
 
@@ -264,7 +280,7 @@ Open [http://localhost:3000](http://localhost:3000) inside your web browser.
 
 ---
 
-## ⚙️ Smart Contract Deployment
+## Smart Contract Deployment
 
 If you want to compile, test, or re-deploy the `PenguinRegistry.sol` smart contract:
 
@@ -305,4 +321,4 @@ forge verify-contract <DEPLOYED_ADDRESS> src/PenguinRegistry.sol:PenguinRegistry
 
 ---
 
-*Developed for **Monad Blitz Pune** by **Team Penguin**.*
+*Developed for Monad Blitz Pune by Team Penguin.*
