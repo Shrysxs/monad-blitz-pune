@@ -36,6 +36,12 @@ export default function LandingPage() {
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
+            <Button asChild size="lg" variant="outline" className="border-zinc-800 hover:bg-zinc-900 text-zinc-300">
+              <Link href="/marketplace">
+                Agent Reputation
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </section>
 
