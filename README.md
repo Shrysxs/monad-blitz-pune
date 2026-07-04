@@ -1,161 +1,308 @@
-# Penguin Protocol
+# 🐧 Penguin Protocol
 
-> **An AI Investment Syndicate where five specialized agents independently debate, vote, and permanently seal their consensus on Monad.**
+> **A decentralized AI Investment Syndicate where specialized autonomous agents debate, vote, and permanently seal consensus decisions on the Monad Blockchain.**
 
-[![Monad Testnet](https://img.shields.io/badge/Monad-Testnet-purple)](https://testnet.monadscan.com)
-[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org)
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-
----
-
-## What It Does
-
-Instead of asking a single AI for investment advice, Penguin Protocol assembles a **syndicate of five specialized AI agents**, each with a distinct investment philosophy:
-
-| Agent | Philosophy |
-|-------|-----------|
-| **Value Hunter** | Fundamentals, moat, long-term intrinsic value — rejects hype |
-| **Momentum Trader** | Price action, trend, breakouts, volume — follows the trend |
-| **Macro Analyst** | Interest rates, liquidity, institutional flows — thinks globally |
-| **On-chain Sleuth** | Whale activity, exchange flows, TVL, token distribution |
-| **Risk Guardian** | Downside risk, volatility, capital preservation — stays cautious |
-
-Each agent receives **live, real-time market data** (price, 24h change, volume, Fear & Greed index), reasons independently, and casts a weighted vote. A consensus engine resolves the debate into a **BUY / SELL / HOLD** recommendation — then seals it immutably on **Monad**.
+[![Monad Testnet](https://img.shields.io/badge/Monad-Testnet-purple?style=for-the-badge&logo=ethereum)](https://testnet.monadscan.com)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=nextdotjs)](https://nextjs.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38BDF8?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com)
+[![Foundry](https://img.shields.io/badge/Smart_Contracts-Foundry-F57C00?style=for-the-badge&logo=solidity)](https://book.getfoundry.sh/)
 
 ---
 
-## Demo Flow
+## 📖 Table of Contents
+- [What is Penguin Protocol?](#-what-is-penguin-protocol)
+- [Product Flow & Architecture](#-product-flow--architecture)
+- [AI Syndicate & Agent Frameworks](#-ai-syndicate--agent-frameworks)
+- [Consensus Engine](#-consensus-engine)
+- [Smart Contract Specification](#-smart-contract-specification)
+- [Reputation Marketplace](#-reputation-marketplace)
+- [Tech Stack](#-tech-stack)
+- [Environment Configuration](#-environment-configuration)
+- [Local Setup & Run](#-local-setup--run)
+- [Smart Contract Deployment](#-smart-contract-deployment)
+
+---
+
+## 💡 What is Penguin Protocol?
+
+Real-world hedge funds and investment firms don't rely on a single voice. They form investment committees composed of macro economists, risk management officers, fundamental analysts, and momentum traders who debate, verify details, and vote. 
+
+**Penguin Protocol** replicates this professional consensus mechanism in a decentralized web application. Instead of trusting a single, opaque AI black-box (`User → ChatGPT → Trade`), users interact with a **Syndicate of five specialized AI Agents**. 
+
+These agents:
+1. Receive identical real-time market data and on-chain metrics (**Shared Market Context**).
+2. Reason independently using custom, non-overlapping analytical frameworks.
+3. Vote with a self-calibrated confidence score.
+4. Reach an aggregate consensus (**BUY**, **SELL**, or **HOLD**).
+5. Record the final decision **immutably on Monad** (securing transparency, historical record, and agent reputation).
+
+---
+
+## 🔄 Product Flow & Architecture
+
+The application is structured to optimize trust. Decisions are fully explainable, transparent, and publicly auditable.
+
+### 1. High-Level Flow Chart
+
+```mermaid
+graph TD
+    A[Landing Page] -->|Launch Demo| B[Select Syndicate]
+    B -->|Choose Asset e.g., BTC, ETH, SOL| C[Start Analysis]
+    C -->|Fetch Real-time Market Data| D[Establish Shared Market Context]
+    D -->|Parallel API Queries| E[LLM Agent Deliberation]
+    
+    subgraph AI Syndicate Deliberation
+        E --> E1[Value Hunter]
+        E --> E2[Momentum Trader]
+        E --> E3[Macro Analyst]
+        E --> E4[On-chain Sleuth]
+        E --> E5[Risk Guardian]
+    end
+    
+    E1 & E2 & E3 & E4 & E5 -->|Independent Reasoning & Votes| F[Consensus Engine]
+    F -->|Weighted Vote Aggregation| G[Consensus Resolved: BUY / SELL / HOLD]
+    G -->|Seal Decision| H{Wallet Check}
+    
+    H -->|Browser Wallet Found| I[Client-side Metamask Switch & Sign]
+    H -->|No Browser Wallet| J[Backend Syndicate Wallet Auto-Sign]
+    
+    I & J -->|Transaction Broadcast| K[Monad Testnet Registry Contract]
+    K -->|Emit Event: DecisionRecorded| L[Transaction Success Screen]
+    L -->|Read Logs via RPC| M[Agent Reputation Marketplace]
+```
+
+### 2. Detailed Technical Workflow
 
 ```
-Landing → Choose Syndicate → Search Asset → Analyze
-    → Agents Think (live streaming) → Agents Vote
-    → Consensus Engine → Record on Monad → ✓ Sealed
+[ User ]                      [ Frontend Next.js ]            [ Next.js API Routes ]            [ CoinGecko / F&G ]           [ Gemini / Groq / OpenRouter ]           [ Monad Testnet ]
+   │                                  │                                  │                                   │                                  │                                  │
+   │ 1. Launch & Select Syndicate     │                                  │                                   │                                  │                                  │
+   ├─────────────────────────────────>│                                  │                                   │                                  │                                  │
+   │                                  │                                  │                                   │                                  │                                  │
+   │ 2. Select Asset & "Analyze"      │                                  │                                   │                                  │                                  │
+   ├─────────────────────────────────>│ 3. POST /api/analyze             │                                   │                                  │                                  │
+   │                                  ├─────────────────────────────────>│                                   │                                  │                                  │
+   │                                  │                                  │ 4. Get Prices & Indices           │                                  │                                  │
+   │                                  │                                  ├──────────────────────────────────>│                                  │                                  │
+   │                                  │                                  │ 5. Return Market Data             │                                  │                                  │
+   │                                  │                                  │<──────────────────────────────────┤                                  │                                  │
+   │                                  │                                  │                                   │                                  │                                  │
+   │                                  │                                  │ 6. Parallel Agent Calls (Gemini/Groq)                                │                                  │
+   │                                  │                                  ├─────────────────────────────────────────────────────────────────────>│                                  │
+   │                                  │                                  │ 7. Return Decisions, Confidence & Reasoning                           │                                  │
+   │                                  │                                  │<─────────────────────────────────────────────────────────────────────┤                                  │
+   │                                  │                                  │                                   │                                  │                                  │
+   │                                  │ 8. Stream Responses & Animate    │                                   │                                  │                                  │
+   │                                  │<─────────────────────────────────┤                                   │                                  │                                  │
+   │                                  │                                  │                                   │                                  │                                  │
+   │                                  │ 9. Calculate Consensus Index     │                                   │                                  │                                  │
+   │                                  ├───────────┐                      │                                   │                                  │                                  │
+   │                                  │<──────────┘                      │                                   │                                  │                                  │
+   │                                  │                                  │                                   │                                  │                                  │
+   │ 10. Trigger "Record On-Chain"    │                                  │                                   │                                  │                                  │
+   ├─────────────────────────────────>│ 11. Send Contract Write          │                                   │                                  │                                  │
+   │                                  ├──────────────────────────────────┼───────────────────────────────────┼──────────────────────────────────┼─────────────────────────────────>│
+   │                                  │                                  │                                   │                                  │                                  │ (Metamask client write or
+   │                                  │                                  │ 12. POST /api/record (Fallback)   │                                  │                                  │  backend transaction fallback)
+   │                                  │                                  ├───────────────────────────────────┼──────────────────────────────────┼─────────────────>│               │
+   │                                  │                                  │                                   │                                  │                  │ 13. Mine      │
+   │                                  │                                  │                                   │                                  │                  │     Block     │
+   │                                  │                                  │                                   │                                  │                  ├───────────┐   │
+   │                                  │                                  │                                   │                                  │                  │<──────────┘   │
+   │                                  │                                  │ 14. Return tx hash                │                                  │                  │               │
+   │                                  │                                  │<──────────────────────────────────┼──────────────────────────────────┼──────────────────┤               │
+   │                                  │ 15. Render Success Modal         │                                   │                                  │                                  │
+   │<─────────────────────────────────┤                                  │                                   │                                  │                                  │
 ```
 
 ---
 
-## Architecture
+## 🤖 AI Syndicate & Agent Frameworks
 
+To guarantee genuine debate, every agent operates under a rigid prompt that aligns with a distinct school of financial and quantitative reasoning:
+
+| Agent | Focus | Analytical Framework & Methodology | Core Bias Constraint |
+|---|---|---|---|
+| **Value Hunter** | Intrinsic Value & Fundamentals | Uses Benjamin Graham's Margin of Safety, Aswath Damodaran's narrative-to-numbers DCF model, and Warren Buffett's Owner Earnings/Moat Width analysis. | *Must always reject speculative hype.* |
+| **Momentum Trader** | Price Action & Technicals | Analyzes RSI (14-period) divergence, MACD crossovers, price relation to 50/200 EMAs, VWAP, and volume-confirmed breakout patterns. | *Must always prioritize immediate trends.* |
+| **Macro Analyst** | Cycles & Global Liquidity | Evaluates Global M2 Liquidity trends, Federal Reserve policies, DXY inverse correlations, Nasdaq beta, and the 4-year Bitcoin halving cycle. | *Must always think globally and cyclically.* |
+| **On-chain Sleuth** | Ledger Forensics & Metrics | Monitors MVRV Ratio, SOPR (Spent Output Profit Ratio), Exchange Netflows (selling pressure), whale wallet accumulation scores, and LTH vs STH supply. | *Must always think blockchain-first.* |
+| **Risk Guardian** | Capital Preservation & Tail Risk | Implements Howard Marks' risk-adjusted cycle analysis, Nassim Nicholas Taleb's fat-tail stress testing, Sharpe/Sortino ratios, and position sizing using the Kelly Criterion. | *Must always challenge assumptions, stay cautious.* |
+
+---
+
+## 📊 Consensus Engine
+
+The consensus engine translates five diverse, independent opinions into one unified recommendation (**BUY / SELL / HOLD**).
+
+### Mathematical Model
+Instead of a simple unweighted count, the consensus engine weighs each agent's vote by its self-reported confidence. This gives higher conviction agents a stronger voice.
+
+Given:
+*   A set of agents $A = \{1, 2, 3, 4, 5\}$
+*   For each agent $i \in A$, a vote $v_i \in \{\text{BUY}, \text{SELL}, \text{HOLD}\}$
+*   For each agent $i \in A$, a confidence score $c_i \in [1, 100]$
+
+Let the weighted breakdown of votes for each decision $d \in \{\text{BUY}, \text{SELL}, \text{HOLD}\}$ be:
+$$W_d = \sum_{i \in A \text{ s.t. } v_i = d} c_i$$
+
+The winning recommendation is:
+$$\text{Recommendation} = \arg\max_{d} W_d$$
+
+The overall consensus confidence indicator is:
+$$\text{Consensus Confidence} = \left( \frac{W_{\text{Recommendation}}}{\sum_{d} W_d} \right) \times 100$$
+
+*Implemented in [lib/consensus.ts](file:///home/shrysxs/hackathons/monad-blitz-pune-1/lib/consensus.ts).*
+
+---
+
+## 📜 Smart Contract Specification
+
+The smart contract is deployed on **Monad Testnet** (Chain ID: `10143`). It is a minimal, optimized registry designed to permanently record and verify syndicate decisions.
+
+### Contract Address
 ```
-penguin-protocol/
-├── app/                        # Next.js 15 App Router (frontend + API)
-│   ├── api/
-│   │   ├── analyze/route.ts    # Fetches live market data → runs 5 LLM agents in parallel
-│   │   ├── assets/route.ts     # Returns live top-100 assets from CoinGecko
-│   │   └── record/route.ts     # Writes decision on-chain via backend wallet
-│   ├── demo/page.tsx           # Main app demo flow
-│   └── page.tsx                # Landing page
-├── components/
-│   ├── layout/                 # AppHeader, PageShell
-│   └── ui/                     # shadcn/ui primitives (Badge, Button, Card, etc.)
-├── constants/
-│   ├── agents.ts               # Agent definitions
-│   ├── contract.ts             # Deployed contract address + ABI
-│   ├── syndicates.ts           # Syndicate definitions
-│   └── theme.ts                # Decision color tokens
-├── contracts/                  # Foundry smart contract project
-│   ├── src/PenguinRegistry.sol # On-chain decision registry
-│   ├── test/                   # Forge tests
-│   └── script/Deploy.s.sol     # Monad Testnet deploy script
-├── features/
-│   └── debate/                 # Core debate feature
-│       ├── components/         # UI: AssetSelector, DebateArena, ConsensusPanel, SuccessModal
-│       └── use-debate.ts       # State machine for the full debate flow
-├── lib/
-│   ├── ai/agents.ts            # LLM system prompts + Gemini/Groq/OpenRouter client
-│   ├── chain.ts                # viem Monad chain config
-│   ├── consensus.ts            # Weighted vote calculator
-│   ├── market-data.ts          # Live CoinGecko + Fear & Greed fetching with 30s cache
-│   └── utils.ts                # cn() utility
-├── hooks/use-mounted.ts
-└── types/index.ts              # Shared TypeScript types
+0x60Be62dD9B3ED768dbAAc54374b03Ea2F3C52D76
+```
+🔗 [View Deployed Contract on Monadscan](https://testnet.monadscan.com/address/0x60Be62dD9B3ED768dbAAc54374b03Ea2F3C52D76)
+
+---
+
+### Source Code: `PenguinRegistry.sol`
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract PenguinRegistry {
+    // Emitted every time a syndicate decision is sealed on-chain
+    event DecisionRecorded(
+        string asset,
+        string decision,
+        uint256 confidence,
+        uint256 timestamp,
+        address indexed sender
+    );
+
+    /**
+     * @notice Records the collective consensus decision of the AI syndicate.
+     * @param asset The ticker of the analyzed cryptocurrency (e.g. "BTC").
+     * @param decision The consensus recommendation ("BUY" | "SELL" | "HOLD").
+     * @param confidence The overall consensus confidence score (1 to 100).
+     * @param timestamp The block timestamp or custom epoch at decision time.
+     */
+    function recordDecision(
+        string calldata asset,
+        string calldata decision,
+        uint256 confidence,
+        uint256 timestamp
+    ) external {
+        emit DecisionRecorded(asset, decision, confidence, timestamp, msg.sender);
+    }
+}
 ```
 
 ---
 
-## Data Sources
+## 🏛️ Reputation Marketplace
 
-| Data | Source | Cached |
-|------|--------|--------|
-| Asset list (top 100) | CoinGecko `/coins/markets` | 60 s in-memory |
-| Live price, volume, 24h change | CoinGecko `/simple/price` | 30 s per-token |
-| Fear & Greed Index | alternative.me | 60 s in-memory |
-| News / Sentiment | ❌ No free source | Labeled "Unavailable" |
-| On-chain metrics | Mock (CONTEXT.md approved) | — |
+Every transaction sealed via the `recordDecision` function emits an event that the application indexes in real time via standard JSON-RPC queries (`getLogs` client interface).
+
+*   **Location:** `/marketplace`
+*   **Leaderboard Engine:** The Next.js API router queries the contract logs, computes the total number of transactions recorded, and applies a deterministic formula to calculate the verified reputation of each agent.
+*   **Decisions Feed:** Displays a live, scrollable feed of the latest decisions stored on the Monad network, along with direct transaction links to Monadscan.
 
 ---
 
-## Local Setup
+## 🛠️ Tech Stack
 
-### Prerequisites
+| Layer | Technology | Description |
+|---|---|---|
+| **Frontend Framework** | `Next.js 16 (App Router)` | Modern, server-side rendered application with React Server Components. |
+| **Styling & Theme** | `Tailwind CSS v4` | Custom clean theme, dark mode only, using purple accents. |
+| **Animations** | `Framer Motion` | Fluid transitions and sequential agent deliberation typing logs. |
+| **Web3 Client** | `viem` | Lightweight, fast Ethereum API client library. |
+| **AI LLM Models** | `Gemini 2.0 Flash` | High-speed, structured JSON output mode (schema-compliant). |
+| **AI Fallbacks** | `Groq (Llama 3.3 70b)` & `OpenRouter` | Automatic failover to ensure continuous application uptime. |
+| **Smart Contracts** | `Solidity 0.8.20` | Deployed and compiled with Foundry compiler optimizations. |
 
-- Node.js 18+
-- A free API key from at least one of: [Gemini](https://aistudio.google.com), [Groq](https://console.groq.com), [OpenRouter](https://openrouter.ai)
+---
 
-### 1. Clone & Install
+## 🔒 Environment Configuration
 
+Create a `.env.local` file in the root directory. Add the following keys:
+
+```env
+# AI Provider Keys (at least one is required)
+GEMINI_API_KEY=your_gemini_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+
+# Monad Network Wallet Configuration
+# Used by the backend API fallback auto-signer when no browser extension is detected.
+# MUST start with "0x"
+MONAD_PRIVATE_KEY=0x_your_private_key_here
+```
+
+---
+
+## 🚀 Local Setup & Run
+
+Follow these instructions to clone and run the application locally:
+
+### 1. Clone & Install Dependencies
 ```bash
 git clone https://github.com/your-org/penguin-protocol.git
 cd penguin-protocol
 npm install
 ```
 
-### 2. Configure Environment
-
-```bash
-cp .env.example .env.local
-```
-
-Fill in your keys in `.env.local`:
-
-```env
-GEMINI_API_KEY=...
-GROQ_API_KEY=...
-OPENROUTER_API_KEY=...
-MONAD_PRIVATE_KEY=0x...    # Backend wallet for on-chain recording
-```
-
-### 3. Run
-
+### 2. Run the Development Server
 ```bash
 npm run dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) inside your web browser.
 
 ---
 
-## Deployment
+## ⚙️ Smart Contract Deployment
 
-### Web App (Vercel)
+If you want to compile, test, or re-deploy the `PenguinRegistry.sol` smart contract:
 
+### 1. Install Foundry
 ```bash
-npm run build        # verify build passes
-vercel --prod        # deploy
+curl -L https://foundry.paradigm.xyz | bash
+foundryup
 ```
 
-Set all env vars from `.env.example` in your Vercel project settings.
+### 2. Build & Test Contracts
+```bash
+cd contracts
+forge build
+forge test -vv
+```
 
-### Smart Contract
+### 3. Deploy to Monad Testnet
+Set your private key:
+```bash
+export PRIVATE_KEY=0xyour_private_key_here
+```
+Run the deployment script:
+```bash
+forge script script/Deploy.s.sol:Deploy \
+  --rpc-url https://testnet-rpc.monad.xyz \
+  --private-key $PRIVATE_KEY \
+  --broadcast \
+  -vvvv
+```
 
-See [`contracts/README.md`](./contracts/README.md) for full Foundry setup and Monad Testnet deploy instructions.
-
-**Deployed contract:** `0x60Be62dD9B3ED768dbAAc54374b03Ea2F3C52D76` on Monad Testnet  
-[View on Monadscan →](https://testnet.monadscan.com/address/0x60Be62dD9B3ED768dbAAc54374b03Ea2F3C52D76)
+### 4. Verify on Monadscan
+```bash
+forge verify-contract <DEPLOYED_ADDRESS> src/PenguinRegistry.sol:PenguinRegistry \
+  --chain-id 10143 \
+  --verifier blockscout \
+  --verifier-url https://testnet.monadscan.com/api
+```
 
 ---
 
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Next.js 15, TypeScript, Tailwind CSS v4, Framer Motion |
-| UI Components | shadcn/ui, Lucide React |
-| AI | Gemini 1.5 Flash (primary) → Groq Llama-3.3-70b → OpenRouter Gemini 2.5 Flash |
-| Blockchain | Monad Testnet, viem |
-| Smart Contract | Solidity 0.8.20, Foundry |
-| Market Data | CoinGecko (free tier), alternative.me Fear & Greed |
-
----
-
-## Built at Monad Blitz Pune · Team Penguin
+*Developed for **Monad Blitz Pune** by **Team Penguin**.*

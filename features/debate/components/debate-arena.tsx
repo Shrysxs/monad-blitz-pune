@@ -19,35 +19,35 @@ interface DebateArenaProps {
 
 const THINKING_LOGS: Record<AgentId, string[]> = {
   "value-hunter": [
-    "Evaluating asset utility and valuation...",
-    "Reviewing historical price-to-earnings and moats...",
-    "Rejecting speculative narratives and buzz...",
-    "Analyzing intrinsic cash flow metrics..."
+    "Computing FDV/revenue multiple vs sector peers...",
+    "Applying Graham margin of safety — need 33%+ discount to intrinsic value...",
+    "Assessing protocol moat width: network effects, switching costs, fee capture...",
+    "Damodaran DCF — bridging narrative to numbers on owner earnings...",
   ],
   "momentum-trader": [
-    "Scanning trend indicators and moving averages...",
-    "Measuring asset breakout volumes...",
-    "Calculating relative strength index (RSI)...",
-    "Mapping support and resistance levels..."
+    "Reading RSI (14-period) and MACD histogram divergence...",
+    "Checking price vs 50-day and 200-day EMA structure...",
+    "Measuring relative strength vs BTC over rolling 30-day window...",
+    "Validating breakout with volume — need >1.5x 20-day average...",
   ],
   "macro-analyst": [
-    "Analyzing global monetary policy decisions...",
-    "Reviewing interest rate curves and institutional flows...",
-    "Comparing risk assets to sovereign yields...",
-    "Assessing overall capital liquidity environment..."
+    "Assessing Global M2 liquidity expansion rate vs 13-week lag model...",
+    "Checking DXY trend — dollar strength/weakness vs crypto correlation...",
+    "Positioning in BTC halving cycle — post-halving expansion vs pre-peak...",
+    "Analyzing VIX regime and institutional ETF flow data...",
   ],
   "onchain-sleuth": [
-    "Scanning Monad testnet ledger logs...",
-    "Tracking whale inflows and net exchange outflows...",
-    "Inspecting smart contract TVL momentum...",
-    "Analyzing top-holder supply distribution..."
+    "Computing MVRV ratio — market cap vs realized cap for profit/loss map...",
+    "Reading SOPR signal — are coins moving in profit or at a loss?",
+    "Scanning exchange netflow — inflows signal selling pressure, outflows = accumulation...",
+    "Profiling LTH vs STH supply distribution and whale accumulation score...",
   ],
   "risk-guardian": [
-    "Calculating capital preservation parameters...",
-    "Simulating worst-case downside volatility...",
-    "Evaluating tail risks and systemic exposure...",
-    "Challenging optimistic growth projections..."
-  ]
+    "Calculating max drawdown from ATH and historical bear market precedent...",
+    "Running Kelly Criterion sizing — estimating edge and win/loss ratio...",
+    "Stress-testing tail risk: exchange hack, regulatory ban, liquidity crisis...",
+    "Computing Sharpe/Sortino ratio — is the risk-adjusted return worth it?",
+  ],
 };
 
 export function DebateArena({
