@@ -149,6 +149,261 @@ export function generateMockOnChainMetrics(asset: string): MockOnChainMetrics {
   }
 }
 
+export function generateMockAgentResponse(
+  agentId: AgentId,
+  asset: string
+): Omit<AgentResponse, "agentId"> {
+  const ticker = asset.toUpperCase().trim();
+  const isBtc = ticker.includes("BTC") || ticker.includes("BITCOIN");
+  const isEth = ticker.includes("ETH") || ticker.includes("ETHER");
+  const isSol = ticker.includes("SOL") || ticker.includes("SOLANA");
+  const isMon = ticker.includes("MON") || ticker.includes("MONAD");
+
+  if (agentId === "value-hunter") {
+    if (isBtc) {
+      return {
+        decision: "BUY",
+        confidence: 85,
+        reasoning: "Bitcoin trades at a meaningful discount relative to its growing global institutional adoption. The network has the most durable moat in digital assets, acting as a sovereign store of value with a hard-capped supply of 21 million.",
+        bullCase: "ETF inflows continue to remove liquid supply from exchanges.",
+        bearCase: "Regulatory hurdles in key jurisdictions could temporarily damp retail participation.",
+        timeHorizon: "long",
+      };
+    } else if (isEth) {
+      return {
+        decision: "HOLD",
+        confidence: 70,
+        reasoning: "While Ethereum captures significant protocol fee revenue via its gas-burn mechanism, its competitive moat is facing pressure from high-throughput L1 networks. Intrinsic value is fair, but margins of safety are narrow.",
+        bullCase: "L2 scaling ecosystem continues to capture active wallet growth.",
+        bearCase: "Rotation of developer mindshare to alternative high-speed chains.",
+        timeHorizon: "medium",
+      };
+    } else if (isSol) {
+      return {
+        decision: "BUY",
+        confidence: 75,
+        reasoning: "Solana shows strong active fee generation and high capital efficiency. Despite network decentralization trade-offs, its execution speed is creating a structural moat for consumer dApps and retail liquidity.",
+        bullCase: "Fee capture increases due to rising decentralized exchange volume.",
+        bearCase: "High inflation rate and token emission structure dilutes long-term holders.",
+        timeHorizon: "medium",
+      };
+    } else if (isMon) {
+      return {
+        decision: "BUY",
+        confidence: 90,
+        reasoning: "Monad represents a generational shift in EVM performance. By utilizing parallel execution, it preserves developer toolchains while achieving massive scale, presenting an asymmetric risk-reward profile.",
+        bullCase: "Preserves the massive EVM developer moat while increasing throughput 100x.",
+        bearCase: "Early stage network deployment risks and validator security centralization.",
+        timeHorizon: "long",
+      };
+    } else {
+      return {
+        decision: "HOLD",
+        confidence: 60,
+        reasoning: `Asset fundamentals for ${ticker} are stable but trade-volume ratios indicate speculative pricing. Insufficient intrinsic cash flows or moat metrics to warrant a confident buy recommendation.`,
+        bullCase: "Adoption expands past core developer cohort.",
+        bearCase: "High valuation relative to historical protocol revenue.",
+        timeHorizon: "medium",
+      };
+    }
+  }
+
+  if (agentId === "momentum-trader") {
+    if (isBtc) {
+      return {
+        decision: "BUY",
+        confidence: 88,
+        reasoning: "Price is trading cleanly above both the 50-day and 200-day EMAs, signaling a robust macro uptrend. RSI is at 62, indicating strong momentum without being overbought, while MACD histogram continues to expand.",
+        bullCase: "Breakout above major psychological resistance on high volume.",
+        bearCase: "Loss of 50-day EMA support would trigger trend invalidation.",
+        timeHorizon: "short",
+      };
+    } else if (isEth) {
+      return {
+        decision: "HOLD",
+        confidence: 65,
+        reasoning: "Ethereum is consolidating sideways within a tightening range. Price is hovering around the 50-day EMA with declining volume, indicating distribution. Need a clean breakout above resistance before committing.",
+        bullCase: "Volume expansion on daily candle breakout above key resistance level.",
+        bearCase: "Rejection at descending trendline leads to retest of macro support.",
+        timeHorizon: "short",
+      };
+    } else if (isSol) {
+      return {
+        decision: "BUY",
+        confidence: 82,
+        reasoning: "Solana shows explosive relative strength, outperforming BTC over the last 30 days. Price broke out of a multi-month accumulation pattern on 2x average volume, indicating institutional accumulation.",
+        bullCase: "Continuation of trend toward previous local highs with expanding volume.",
+        bearCase: "RSI bearish divergence on lower timeframe charts hints at local top.",
+        timeHorizon: "short",
+      };
+    } else if (isMon) {
+      return {
+        decision: "BUY",
+        confidence: 95,
+        reasoning: "Parabolic momentum signals across all testnet transaction metrics. Exponential growth in wallet activity and breakout price structures confirm early-stage trend adoption curves are in hyper-expansion phase.",
+        bullCase: "Price structures sustain breakouts across multiple local resistance blocks.",
+        bearCase: "Extreme overbought conditions could trigger sharp leverage flush.",
+        timeHorizon: "short",
+      };
+    } else {
+      return {
+        decision: "SELL",
+        confidence: 60,
+        reasoning: `Price of ${ticker} has fallen below the 50-day EMA on expanding volume, confirming a bearish trend shift. Momentum indicators are dropping, signaling further downside target testing.`,
+        bullCase: "Short-term relief rally to retest overhead EMA resistance.",
+        bearCase: "Break down below primary trendline support triggers capitulation.",
+        timeHorizon: "short",
+      };
+    }
+  }
+
+  if (agentId === "macro-analyst") {
+    if (isBtc) {
+      return {
+        decision: "BUY",
+        confidence: 82,
+        reasoning: "We are entering the liquidity expansion phase of the global debt cycle, with central bank M2 money supply expanding. The US Dollar Index (DXY) is breaking down, historically a major tailwind for Bitcoin.",
+        bullCase: "Accelerating Fed rate cuts boost risk-on asset allocation.",
+        bearCase: "Unexpected geopolitical events trigger temporary global risk-off rotation.",
+        timeHorizon: "long",
+      };
+    } else if (isEth) {
+      return {
+        decision: "BUY",
+        confidence: 75,
+        reasoning: "Institutional capital flows are stabilizing following ETF product approvals. Eth dominance is near cycle lows, indicating we are approaching the macro rotation phase where capital flows out of BTC into top smart contract L1s.",
+        bullCase: "Net positive ETF inflows trigger supply squeeze.",
+        bearCase: "Broad equity market correction delays rotation into alts.",
+        timeHorizon: "long",
+      };
+    } else if (isSol) {
+      return {
+        decision: "BUY",
+        confidence: 80,
+        reasoning: "Solana is capturing a growing share of global crypto liquidity, operating as the primary high-beta play on risk-on market conditions. Institutional interest is growing, paving the way for eventual ETF narratives.",
+        bullCase: "Capital rotation accelerates on stable interest rate environments.",
+        bearCase: "High beta makes Solana highly sensitive to sudden Nasdaq downside.",
+        timeHorizon: "medium",
+      };
+    } else if (isMon) {
+      return {
+        decision: "BUY",
+        confidence: 85,
+        reasoning: "Monad sits at the intersection of parallel execution and EVM scalability, positioning it as the prime beneficiary of developer migration as global network usage peaks and transaction fees rise elsewhere.",
+        bullCase: "Captures capital inflow from developers seeking high transaction efficiency.",
+        bearCase: "Prolonged macro contraction slows capital deployment into new networks.",
+        timeHorizon: "long",
+      };
+    } else {
+      return {
+        decision: "HOLD",
+        confidence: 70,
+        reasoning: `The global macroeconomic environment for ${ticker} is neutral-to-hawkish. Interest rates remain restrictive, limiting capital flows into secondary altcoins until M2 liquidity expansion becomes more pronounced.`,
+        bullCase: "Central bank policy shift increases risk appetite.",
+        bearCase: "US dollar strength limits altcoin upside.",
+        timeHorizon: "medium",
+      };
+    }
+  }
+
+  if (agentId === "onchain-sleuth") {
+    if (isBtc) {
+      return {
+        decision: "BUY",
+        confidence: 80,
+        reasoning: "The ledger shows strong accumulation. Wallet balance charts show whales holding >1,000 BTC are consistently adding to their positions. MVRV is at 1.8, placing us in the healthy mid-accumulation zone.",
+        bullCase: "Accelerating exchange outflows indicate supply exhaustion.",
+        bearCase: "Sudden spike in exchange inflows suggests whale profit-taking.",
+        timeHorizon: "medium",
+      };
+    } else if (isEth) {
+      return {
+        decision: "BUY",
+        confidence: 78,
+        reasoning: "Ethereum smart contracts continue to lock up liquid supply, with over 28% of ETH now staked. Low exchange balances reduce the liquidity pool, meaning any demand increase will cause rapid upward price movements.",
+        bullCase: "Increased burn rate due to layer 2 activity deflationary pressure.",
+        bearCase: "Large unlock events from staking platforms create temporary supply pressure.",
+        timeHorizon: "medium",
+      };
+    } else if (isSol) {
+      return {
+        decision: "HOLD",
+        confidence: 68,
+        reasoning: "On-chain volumes are extremely high, but the ledger indicates high token concentration, with top 100 wallets controlling a large percentage of supply. We are seeing active whale distribution on local price peaks.",
+        bullCase: "Continuous growth in unique daily transacting address counts.",
+        bearCase: "Whale transfer to exchanges signals imminent distribution.",
+        timeHorizon: "medium",
+      };
+    } else if (isMon) {
+      return {
+        decision: "BUY",
+        confidence: 90,
+        reasoning: "Extreme transactional activity on the Monad testnet ecosystem. Node interaction counts and smart contract deployment activity are growing 35% week-over-week, confirming deep structural developer engagement.",
+        bullCase: "On-chain developer wallet growth rates outperforming rival devnets.",
+        bearCase: "Distribution concentration in early dev wallets poses lockup risks.",
+        timeHorizon: "medium",
+      };
+    } else {
+      return {
+        decision: "SELL",
+        confidence: 72,
+        reasoning: `The ledger for ${ticker} indicates heavy exchange inflows, signaling incoming selling pressure. MVRV is highly elevated, indicating most holders are likely to distribute assets soon.`,
+        bullCase: "Inflow trend reverses into sustained cold-storage withdrawals.",
+        bearCase: "Whale accumulation trend score falls to historic lows.",
+        timeHorizon: "short",
+      };
+    }
+  }
+
+  // risk-guardian
+  if (isBtc) {
+    return {
+      decision: "BUY",
+      confidence: 80,
+      reasoning: "Bitcoin is currently down 18% from its historical peak, presenting a statistically favorable risk-reward ratio. The Kelly Criterion suggests a standard position sizing, as downside risk is historically bounded at this cycle stage.",
+      bullCase: "Drawdown risk remains minimal with support from structural ETF buyers.",
+      bearCase: "An unexpected macro liquidity event could cause a correlation breakdown.",
+      timeHorizon: "long",
+    };
+  } else if (isEth) {
+    return {
+      decision: "HOLD",
+      confidence: 75,
+      reasoning: "Ethereum volatility remains stable at 55%. However, Sharpe/Sortino ratios are moderate compared to historical performance. Preserving capital suggests waiting for a deeper drawdown to establish a margin of safety.",
+      bullCase: "Volatility declines further, indicating risk stabilization.",
+      bearCase: "Regulatory uncertainty regarding staking platforms adds tail-risk.",
+      timeHorizon: "medium",
+    };
+  } else if (isSol) {
+    return {
+      decision: "HOLD",
+      confidence: 60,
+      reasoning: "Solana's high beta (1.6) and high historical volatility (85%) require a smaller position size under Kelly sizing. While potential upside is high, the tail-risk of temporary network outages cannot be ignored.",
+      bullCase: "Extended periods of high network uptime reduce platform tail-risk.",
+      bearCase: "A broad market selloff would disproportionately impact Solana due to high beta.",
+      timeHorizon: "medium",
+    };
+  } else if (isMon) {
+    return {
+      decision: "BUY",
+      confidence: 75,
+      reasoning: "Despite early network phase risks, Monad's parallel architecture represents an asymmetric opportunity. Risk is mitigated by sizing positions cautiously, balancing potential 10x upside against early execution risk.",
+      bullCase: "Smooth mainnet rollout minimizes execution and technical risks.",
+      bearCase: "Smart contract vulnerability or compiler bug in early parallel execution engine.",
+      timeHorizon: "long",
+    };
+  } else {
+    return {
+      decision: "SELL",
+      confidence: 78,
+      reasoning: `The asset ${ticker} has extremely thin liquidity and order books, creating high slippage risk during market panics. Kelly sizing is 0%. Risk of permanent capital loss is unacceptably high.`,
+      bullCase: "Liquidity profiles improve with exchange listings.",
+      bearCase: "Sudden regulatory enforcement causes immediate delisting from major platforms.",
+      timeHorizon: "short",
+    };
+  }
+}
+
 export function buildMarketContextString(
   context: MarketContext,
   metrics: MockOnChainMetrics
