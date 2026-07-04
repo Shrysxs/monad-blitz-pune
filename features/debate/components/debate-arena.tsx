@@ -123,13 +123,18 @@ export function DebateArena({
               }`}
             >
               {/* Card Header */}
-              <CardHeader className="p-5 border-b border-zinc-900/60 pb-3 flex flex-row items-center justify-between space-y-0">
-                <div className="flex flex-col gap-0.5">
+              <CardHeader className="p-5 border-b border-zinc-900/60 pb-3 flex flex-row items-start justify-between space-y-0 gap-2">
+                <div className="flex flex-col gap-1 min-w-0 flex-1">
                   <CardTitle className="text-base text-zinc-100 font-semibold">{agent.name}</CardTitle>
-                  <span className="text-[10px] text-zinc-500 font-mono lowercase tracking-wider">{agent.mustAlways}</span>
+                  <span className="text-[11px] text-zinc-400 font-medium leading-tight">
+                    {agent.focus}
+                  </span>
+                  <span className="text-[10px] text-purple-400 font-mono lowercase tracking-wider">
+                    always: {agent.mustAlways}
+                  </span>
                 </div>
                 {isRevealed && response && (
-                  <Badge variant={response.decision.toLowerCase() as "buy" | "sell" | "hold"} className="px-2 py-0.5 text-xs font-semibold rounded-md">
+                  <Badge variant={response.decision.toLowerCase() as "buy" | "sell" | "hold"} className="px-2 py-0.5 text-xs font-semibold rounded-md shrink-0">
                     {response.decision}
                   </Badge>
                 )}
@@ -152,7 +157,17 @@ export function DebateArena({
                           <span>Confidence</span>
                           <span className="font-semibold text-zinc-200">{response.confidence}%</span>
                         </div>
-                        <Progress value={response.confidence} className="h-1.5 bg-zinc-900" indicatorClassName="bg-purple-500" />
+                        <Progress 
+                          value={response.confidence} 
+                          className="h-1.5 bg-zinc-900" 
+                          indicatorClassName={
+                            response.decision === "BUY"
+                              ? "bg-emerald-500"
+                              : response.decision === "SELL"
+                              ? "bg-red-500"
+                              : "bg-amber-500"
+                          } 
+                        />
                       </div>
 
                       <div className="flex-1 flex flex-col gap-3">

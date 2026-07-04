@@ -159,7 +159,10 @@ function AgentLeaderboard({ total }: { total: number }) {
                         {base?.specialty}
                       </Badge>
                     </div>
-                    <p className="text-[10px] text-zinc-500 mt-0.5 font-mono">
+                    <p className="text-xs text-zinc-300 mt-1.5 leading-relaxed">
+                      {agent.focus}
+                    </p>
+                    <p className="text-[10px] text-zinc-500 mt-1 font-mono">
                       always: {agent.mustAlways}
                     </p>
 
