@@ -147,7 +147,6 @@ export default function DemoPage() {
               </div>
 
               <DebateArena
-                asset={asset}
                 marketContext={marketContext}
                 agentResponses={agentResponses}
                 revealedCount={revealedCount}
@@ -176,7 +175,6 @@ export default function DemoPage() {
               </div>
 
               <DebateArena
-                asset={asset}
                 marketContext={marketContext}
                 agentResponses={agentResponses}
                 revealedCount={revealedCount}
@@ -223,7 +221,6 @@ export default function DemoPage() {
               />
 
               <DebateArena
-                asset={asset}
                 marketContext={marketContext}
                 agentResponses={agentResponses}
                 revealedCount={revealedCount}

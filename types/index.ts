@@ -57,3 +57,13 @@ export interface OnChainRecord {
   confidence: number;
   timestamp: number;
 }
+
+export type Step = "select-syndicate" | "select-asset" | "debating" | "consensus" | "success";
+
+export interface MockOnChainMetrics {
+  tvl: string;
+  whaleAccumulation: string;
+  exchangeInflows: string;
+  tokenDistribution: string;
+}
+

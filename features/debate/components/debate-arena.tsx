@@ -2,20 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cpu, Terminal, TrendingUp, TrendingDown, HelpCircle, Eye, EyeOff } from "lucide-react";
+import { Cpu, Terminal } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { AGENTS } from "@/constants/agents";
-import type { AgentResponse, MarketContext, AgentId } from "@/types";
+import type { AgentResponse, MarketContext, AgentId, MockOnChainMetrics } from "@/types";
 
 interface DebateArenaProps {
-  asset: string;
   marketContext: MarketContext | null;
   agentResponses: AgentResponse[];
   revealedCount: number;
   isAnalyzing: boolean;
-  onChainMetrics: any;
+  onChainMetrics: MockOnChainMetrics | null;
 }
 
 const THINKING_LOGS: Record<AgentId, string[]> = {
@@ -51,21 +50,7 @@ const THINKING_LOGS: Record<AgentId, string[]> = {
   ]
 };
 
-const getDecisionColor = (decision?: string) => {
-  switch (decision) {
-    case "BUY":
-      return "text-emerald-400 border-emerald-500/30 bg-emerald-500/10";
-    case "SELL":
-      return "text-red-400 border-red-500/30 bg-red-500/10";
-    case "HOLD":
-      return "text-amber-400 border-amber-500/30 bg-amber-500/10";
-    default:
-      return "text-zinc-400 border-zinc-800 bg-zinc-950";
-  }
-};
-
 export function DebateArena({
-  asset,
   marketContext,
   agentResponses,
   revealedCount,
@@ -75,7 +60,14 @@ export function DebateArena({
   return (
     <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto">
       {/* 1. Shared Market Context Banner */}
-      {marketContext && (
+      {!marketContext ? (
+        <div className="border border-zinc-800/80 bg-zinc-950/40 rounded-[16px] p-6 flex items-center justify-center min-h-[90px] animate-pulse">
+          <div className="flex items-center gap-3 text-zinc-500 font-mono text-xs">
+            <span className="h-2 w-2 rounded-full bg-purple-500 animate-ping" />
+            <span>Fetching real-time market indices & query ledger events from Monad Network...</span>
+          </div>
+        </div>
+      ) : (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -165,7 +157,7 @@ export function DebateArena({
 
                       <div className="flex-1 flex flex-col gap-3">
                         <p className="text-xs text-zinc-300 leading-relaxed italic">
-                          "{response.reasoning}"
+                          &quot;{response.reasoning}&quot;
                         </p>
 
                         <div className="grid grid-cols-2 gap-3 border-t border-zinc-900/60 pt-3 text-[10px]">

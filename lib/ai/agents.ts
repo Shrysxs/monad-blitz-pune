@@ -1,4 +1,4 @@
-import type { AgentId, AgentResponse, MarketContext, Decision, TimeHorizon } from "@/types";
+import type { AgentId, AgentResponse, MarketContext, MockOnChainMetrics } from "@/types";
 
 export const AGENT_SYSTEM_PROMPTS: Record<AgentId, string> = {
   "value-hunter": `You are "Value Hunter", a conservative value investor in the Penguin Syndicate. 
@@ -74,12 +74,6 @@ Analyze the market context and output your decision. You must respond with a JSO
 }`,
 };
 
-export interface MockOnChainMetrics {
-  tvl: string;
-  whaleAccumulation: string;
-  exchangeInflows: string;
-  tokenDistribution: string;
-}
 
 export function generateMockOnChainMetrics(asset: string): MockOnChainMetrics {
   const seed = asset.toUpperCase();

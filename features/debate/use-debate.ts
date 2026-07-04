@@ -1,19 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createWalletClient, custom, createPublicClient, http } from "viem";
 import { monadTestnet } from "@/lib/chain";
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from "@/constants/contract";
-import { generateMarketContext } from "@/features/market-context/mock";
 import { calculateConsensus } from "@/lib/consensus";
 import type { 
   Syndicate, 
   MarketContext, 
   AgentResponse, 
-  ConsensusResult 
+  ConsensusResult,
+  Step,
+  MockOnChainMetrics
 } from "@/types";
 
-export type Step = "select-syndicate" | "select-asset" | "debating" | "consensus" | "success";
+interface WindowWithEthereum {
+  ethereum?: {
+    request: (args: { method: string; params?: unknown[] }) => Promise<string[]>;
+  };
+}
 
 export function useDebate() {
   const [step, setStep] = useState<Step>("select-syndicate");
@@ -24,7 +29,7 @@ export function useDebate() {
   const [agentResponses, setAgentResponses] = useState<AgentResponse[]>([]);
   const [revealedCount, setRevealedCount] = useState<number>(0);
   const [consensus, setConsensus] = useState<ConsensusResult | null>(null);
-  const [onChainMetrics, setOnChainMetrics] = useState<any>(null);
+  const [onChainMetrics, setOnChainMetrics] = useState<MockOnChainMetrics | null>(null);
   
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [isWritingContract, setIsWritingContract] = useState<boolean>(false);
@@ -48,9 +53,7 @@ export function useDebate() {
     setRevealedCount(0);
     setAgentResponses([]);
     setConsensus(null);
-
-    const context = generateMarketContext(selectedAsset);
-    setMarketContext(context);
+    setMarketContext(null);
 
     try {
       const response = await fetch("/api/analyze", {
@@ -58,17 +61,23 @@ export function useDebate() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           asset: selectedAsset,
-          marketContext: context,
         }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = (await response.json()) as { error?: string };
         throw new Error(errorData.error || "Failed to analyze market context");
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as {
+        success: boolean;
+        marketContext: MarketContext;
+        onChainMetrics: MockOnChainMetrics;
+        responses: AgentResponse[];
+      };
+
       setOnChainMetrics(data.onChainMetrics);
+      setMarketContext(data.marketContext);
       setAgentResponses(data.responses);
       setIsAnalyzing(false);
 
@@ -86,9 +95,10 @@ export function useDebate() {
         }
       }, 800); // 800ms between each agent card reveal
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.message || "Something went wrong during debate analysis.");
+      const errMsg = err instanceof Error ? err.message : "Something went wrong during debate analysis.";
+      setError(errMsg);
       setIsAnalyzing(false);
     }
   };
@@ -100,27 +110,48 @@ export function useDebate() {
     setIsSimulated(false);
     setError(null);
 
-    const hasEthereum = typeof window !== "undefined" && (window as any).ethereum;
+    const hasEthereum = typeof window !== "undefined" && !!(window as WindowWithEthereum).ethereum;
 
     if (!hasEthereum) {
-      // Fallback: Simulate transaction for demo since no Web3 wallet is injected
-      console.warn("No Web3 wallet detected, falling back to simulated transaction");
-      setTimeout(() => {
-        const fakeHash = "0x" + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
-        setTxHash(fakeHash);
-        setIsSimulated(true);
+      // Fallback: Submit transaction on-chain via backend Syndicate Wallet
+      try {
+        console.log("No browser wallet detected. Executing on-chain write via Syndicate Agent Wallet...");
+        const response = await fetch("/api/record", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            asset: marketContext.asset,
+            decision: consensus.recommendation,
+            confidence: consensus.confidence,
+          }),
+        });
+
+        if (!response.ok) {
+          const errData = (await response.json()) as { error?: string };
+          throw new Error(errData.error || "Failed to record decision on-chain via Syndicate Wallet.");
+        }
+
+        const data = (await response.json()) as { txHash: string };
+        setTxHash(data.txHash);
+        setIsSimulated(false); // It is a real, confirmed Monad Testnet transaction!
         setIsWritingContract(false);
         setStep("success");
-      }, 2000);
+      } catch (err: unknown) {
+        console.error("Backend contract write failed:", err);
+        const errMsg = err instanceof Error ? err.message : "Failed to record decision on-chain via Syndicate Wallet.";
+        setError(errMsg);
+        setIsWritingContract(false);
+      }
       return;
     }
 
     try {
-      const ethereum = (window as any).ethereum;
+      const ethereum = (window as WindowWithEthereum).ethereum;
+      if (!ethereum) throw new Error("No ethereum provider found");
       
       // Request accounts
       const accounts = await ethereum.request({ method: "eth_requestAccounts" });
-      const account = accounts[0];
+      const account = accounts[0] as `0x${string}`;
 
       // Request chain switch
       try {
@@ -128,9 +159,10 @@ export function useDebate() {
           method: "wallet_switchEthereumChain",
           params: [{ chainId: "0x279f" }], // 10143 in hex is 0x279f
         });
-      } catch (switchError: any) {
+      } catch (switchError: unknown) {
+        const switchErr = switchError as { code?: number };
         // If chain is not added, add it
-        if (switchError.code === 4902) {
+        if (switchErr.code === 4902) {
           await ethereum.request({
             method: "wallet_addEthereumChain",
             params: [
@@ -181,9 +213,10 @@ export function useDebate() {
 
       setIsWritingContract(false);
       setStep("success");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Contract call failed:", err);
-      setError(err.message || "Failed to submit transaction to Monad.");
+      const errMsg = err instanceof Error ? err.message : "Failed to submit transaction to Monad.";
+      setError(errMsg);
       setIsWritingContract(false);
     }
   };

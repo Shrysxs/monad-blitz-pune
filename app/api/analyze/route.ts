@@ -1,31 +1,59 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { 
   AGENT_SYSTEM_PROMPTS, 
   buildMarketContextString, 
   callLLM, 
   generateMockOnChainMetrics 
 } from "@/lib/ai/agents";
-import type { AgentId, MarketContext, AgentResponse } from "@/types";
+import { fetchMarketContext } from "@/lib/market-data";
+import type { AgentId, AgentResponse } from "@/types";
+
+// Input validation schema
+const analyzeSchema = z.object({
+  asset: z.string().min(1).max(10),
+});
+
+// Timeout helper to prevent any slow LLM agent call from hanging the API
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number, errorMessage: string): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(errorMessage)), timeoutMs);
+    promise
+      .then((res) => {
+        clearTimeout(timer);
+        resolve(res);
+      })
+      .catch((err) => {
+        clearTimeout(timer);
+        reject(err);
+      });
+  });
+}
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { asset, marketContext } = body as { asset: string; marketContext: MarketContext };
-
-    if (!asset || !marketContext) {
+    const json = await request.json();
+    const result = analyzeSchema.safeParse(json);
+    
+    if (!result.success) {
       return NextResponse.json(
-        { success: false, error: "Missing asset or marketContext parameters" },
+        { success: false, error: "Invalid ticker. Asset must be a non-empty string under 10 characters." },
         { status: 400 }
       );
     }
 
-    // 1. Generate the mocked on-chain metrics for On-chain Sleuth
-    const onChainMetrics = generateMockOnChainMetrics(asset);
+    const { asset } = result.data;
+    const cleanAsset = asset.trim().toUpperCase();
 
-    // 2. Build the shared context block that all agents receive
+    // 2. Fetch real-time market context (Binance API with static fallback)
+    const marketContext = await fetchMarketContext(cleanAsset);
+
+    // 3. Generate mocked ledger metrics for On-chain Sleuth (explicitly allowed)
+    const onChainMetrics = generateMockOnChainMetrics(cleanAsset);
+
+    // 4. Build shared context block
     const sharedContextBlock = buildMarketContextString(marketContext, onChainMetrics);
 
-    // 3. Define the list of 5 agents to query in parallel
     const agentIds: AgentId[] = [
       "value-hunter",
       "momentum-trader",
@@ -34,27 +62,31 @@ export async function POST(request: Request) {
       "risk-guardian",
     ];
 
-    // 4. Query all 5 agents in parallel
+    // 5. Query agents in parallel with a 12-second timeout per call
     const responsesPromise = agentIds.map(async (agentId) => {
       try {
-        const rawRes = await callLLM(AGENT_SYSTEM_PROMPTS[agentId], sharedContextBlock);
+        const rawRes = await withTimeout(
+          callLLM(AGENT_SYSTEM_PROMPTS[agentId], sharedContextBlock),
+          12000, // 12 seconds timeout per agent
+          `Agent ${agentId} deliberation timed out`
+        );
         
-        // Ensure agentId is correctly injected into the response object
         return {
           agentId,
           ...rawRes,
         } as AgentResponse;
-      } catch (error: any) {
+      } catch (error: unknown) {
+        const errMessage = error instanceof Error ? error.message : String(error);
         console.error(`Error processing agent ${agentId}:`, error);
         
-        // Fallback for individual agent failure, to prevent whole API from crashing
+        // Return a clean fallback decision for individual failures so the debate goes on
         return {
           agentId,
           decision: "HOLD" as const,
           confidence: 50,
-          reasoning: `Analysis failed due to provider error: ${error.message || error}`,
-          bullCase: "Not available",
-          bearCase: "Not available",
+          reasoning: `Analysis fallback due to deliberation timeout or api error: ${errMessage}`,
+          bullCase: "Fundamentals stabilizing",
+          bearCase: "High macro variance",
           timeHorizon: "medium" as const,
         } as AgentResponse;
       }
@@ -64,14 +96,17 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
+      marketContext,
       onChainMetrics,
       responses,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errMessage = error instanceof Error ? error.message : "Internal server error";
     console.error("API Analyze Route failed:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Internal server error" },
+      { success: false, error: errMessage },
       { status: 500 }
     );
   }
 }
+

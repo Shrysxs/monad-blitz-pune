@@ -1,10 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Cpu, ShieldCheck, RefreshCw, Layers } from "lucide-react";
+import { ShieldCheck, RefreshCw, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { DECISION_STYLES } from "@/constants/theme";
 import type { ConsensusResult, Syndicate } from "@/types";
 
 interface ConsensusPanelProps {
@@ -16,30 +17,6 @@ interface ConsensusPanelProps {
   onReset: () => void;
 }
 
-const getRecommendationDetails = (rec: string) => {
-  switch (rec) {
-    case "BUY":
-      return {
-        color: "text-emerald-400 border-emerald-500/20 bg-emerald-500/5",
-        barColor: "bg-emerald-500",
-        label: "BUY ACCORD",
-      };
-    case "SELL":
-      return {
-        color: "text-red-400 border-red-500/20 bg-red-500/5",
-        barColor: "bg-red-500",
-        label: "SELL ACCORD",
-      };
-    case "HOLD":
-      default:
-      return {
-        color: "text-amber-400 border-amber-500/20 bg-amber-500/5",
-        barColor: "bg-amber-500",
-        label: "HOLD ACCORD",
-      };
-  }
-};
-
 export function ConsensusPanel({
   consensus,
   syndicate,
@@ -48,7 +25,7 @@ export function ConsensusPanel({
   onRecord,
   onReset,
 }: ConsensusPanelProps) {
-  const details = getRecommendationDetails(consensus.recommendation);
+  const details = DECISION_STYLES[consensus.recommendation];
 
   return (
     <motion.div
@@ -69,7 +46,7 @@ export function ConsensusPanel({
 
           <div className="flex flex-col items-center text-center gap-2 py-4">
             <span className="text-xs font-medium text-zinc-500 uppercase tracking-widest">Syndicate Accord for {asset}</span>
-            <h3 className={`text-5xl font-bold tracking-tighter ${details.color.split(" ")[0]}`}>
+            <h3 className={`text-5xl font-bold tracking-tighter ${details.text}`}>
               {consensus.recommendation}
             </h3>
             <span className="text-sm text-zinc-400 font-semibold mt-1">
