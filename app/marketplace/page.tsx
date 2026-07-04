@@ -25,12 +25,12 @@ import type { OnChainDecision, ReputationStats } from "@/app/api/reputation/rout
 // The contract stores asset/decision/confidence/sender — no per-agent records.
 // We compute estimated scores from aggregated on-chain confidence + decision
 // counts, combined with each agent's fixed base characteristics.
-const AGENT_BASE_STATS: Record<string, { accuracy: number; specialty: string; icon: string }> = {
-  "value-hunter":    { accuracy: 74, specialty: "Fundamental Analysis",  icon: "🔍" },
-  "momentum-trader": { accuracy: 69, specialty: "Trend & Price Action",   icon: "📈" },
-  "macro-analyst":   { accuracy: 71, specialty: "Global Macro Cycles",    icon: "🌐" },
-  "onchain-sleuth":  { accuracy: 78, specialty: "On-Chain Intelligence",  icon: "⛓️" },
-  "risk-guardian":   { accuracy: 82, specialty: "Capital Preservation",   icon: "🛡️" },
+const AGENT_BASE_STATS: Record<string, { accuracy: number; specialty: string; initials: string }> = {
+  "value-hunter":    { accuracy: 74, specialty: "Fundamental Analysis",  initials: "VH" },
+  "momentum-trader": { accuracy: 69, specialty: "Trend & Price Action",   initials: "MT" },
+  "macro-analyst":   { accuracy: 71, specialty: "Global Macro Cycles",    initials: "MA" },
+  "onchain-sleuth":  { accuracy: 78, specialty: "On-Chain Intelligence",  initials: "OS" },
+  "risk-guardian":   { accuracy: 82, specialty: "Capital Preservation",   initials: "RG" },
 };
 
 function deriveReputation(totalDecisions: number, agentIndex: number): number {
@@ -77,14 +77,14 @@ function StatsBar({ stats }: { stats: ReputationStats }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {[
-        { label: "Total Decisions", value: stats.total, color: "text-purple-400" },
-        { label: "BUY Consensus",   value: stats.buyCount,  color: "text-emerald-400" },
-        { label: "SELL Consensus",  value: stats.sellCount, color: "text-red-400" },
-        { label: "HOLD Consensus",  value: stats.holdCount, color: "text-amber-400" },
+        { label: "Total Decisions", value: stats.total, color: "text-zinc-100" },
+        { label: "BUY Consensus",   value: stats.buyCount,  color: "text-emerald-500" },
+        { label: "SELL Consensus",  value: stats.sellCount, color: "text-red-500" },
+        { label: "HOLD Consensus",  value: stats.holdCount, color: "text-amber-500" },
       ].map((item) => (
-        <Card key={item.label} className="border-zinc-800 bg-zinc-950/50 rounded-[14px]">
+        <Card key={item.label} className="border-[rgba(255,255,255,0.08)] bg-[#111113] rounded-xl">
           <CardContent className="p-5 flex flex-col gap-1">
-            <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">
+            <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold font-mono">
               {item.label}
             </span>
             <span className={`text-3xl font-bold ${item.color}`}>{item.value}</span>
@@ -94,9 +94,9 @@ function StatsBar({ stats }: { stats: ReputationStats }) {
                   value={(item.value / total) * 100}
                   className="h-1 bg-zinc-900"
                   indicatorClassName={
-                    item.color === "text-emerald-400"
+                    item.color === "text-emerald-500"
                       ? "bg-emerald-500"
-                      : item.color === "text-red-400"
+                      : item.color === "text-red-500"
                       ? "bg-red-500"
                       : "bg-amber-500"
                   }
@@ -107,7 +107,7 @@ function StatsBar({ stats }: { stats: ReputationStats }) {
               </div>
             )}
             {item.label === "Total Decisions" && (
-              <span className="text-xs text-zinc-500 mt-1">
+              <span className="text-xs text-zinc-500 mt-1 font-mono">
                 Avg confidence: {stats.avgConfidence}%
               </span>
             )}
@@ -136,30 +136,32 @@ function AgentLeaderboard({ total }: { total: number }) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.2, delay: index * 0.06 }}
           >
-            <Card className="border-zinc-800 bg-zinc-950/40 rounded-[14px] hover:border-zinc-700 transition-colors">
+            <Card className="border-[rgba(255,255,255,0.08)] bg-[#111113] rounded-xl hover:border-zinc-700 transition-colors duration-200">
               <CardContent className="p-5">
                 <div className="flex items-center gap-4">
                   {/* Rank */}
                   <span
-                    className={`text-lg font-bold w-8 shrink-0 text-center font-mono ${
+                    className={`text-sm font-bold w-8 shrink-0 text-center font-mono ${
                       rankColors[index] ?? "text-zinc-500"
                     }`}
                   >
                     {rankLabels[index]}
                   </span>
 
-                  {/* Icon */}
-                  <span className="text-2xl shrink-0">{base?.icon}</span>
+                  {/* Avatar instead of Emoji */}
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-800 border border-[rgba(255,255,255,0.08)] text-zinc-300 font-mono text-xs font-semibold">
+                    {base?.initials}
+                  </div>
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="text-sm font-semibold text-zinc-100">{agent.name}</h3>
-                      <Badge className="text-[9px] px-1.5 py-0.5 bg-purple-500/10 text-purple-400 border-purple-500/20 rounded-md">
+                      <Badge className="text-[9px] px-1.5 py-0.5 bg-[#18181B] text-zinc-400 border border-[rgba(255,255,255,0.08)] rounded-md font-mono">
                         {base?.specialty}
                       </Badge>
                     </div>
-                    <p className="text-xs text-zinc-300 mt-1.5 leading-relaxed">
+                    <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed font-normal">
                       {agent.focus}
                     </p>
                     <p className="text-[10px] text-zinc-500 mt-1 font-mono">
@@ -175,7 +177,7 @@ function AgentLeaderboard({ total }: { total: number }) {
                       <Progress
                         value={base?.accuracy}
                         className="h-1 bg-zinc-900"
-                        indicatorClassName="bg-purple-500"
+                        indicatorClassName="bg-zinc-400"
                       />
                     </div>
                   </div>
@@ -185,12 +187,12 @@ function AgentLeaderboard({ total }: { total: number }) {
                     <span className="text-2xl font-bold text-zinc-100 tabular-nums">
                       {repScore.toFixed(1)}
                     </span>
-                    <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-semibold">
+                    <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-semibold font-mono">
                       Rep Score
                     </span>
                     <div className="flex items-center gap-1">
-                      <ShieldCheck className="h-3 w-3 text-emerald-400" />
-                      <span className="text-[9px] text-emerald-400">Verified</span>
+                      <ShieldCheck className="h-[14px] w-[14px] text-emerald-500" />
+                      <span className="text-[9px] text-emerald-500 font-mono">Verified</span>
                     </div>
                   </div>
                 </div>
@@ -258,10 +260,10 @@ function DecisionsFeed({ decisions }: { decisions: OnChainDecision[] }) {
               href={`https://testnet.monadscan.com/tx/${d.txHash}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-[10px] text-purple-400 hover:text-purple-300 font-mono transition-colors shrink-0"
+              className="flex items-center gap-1 text-[10px] text-zinc-400 hover:text-zinc-200 font-mono transition-colors shrink-0"
             >
               {shortHash(d.txHash)}
-              <ExternalLink className="h-2.5 w-2.5" />
+              <ExternalLink className="h-[14px] w-[14px]" />
             </a>
           )}
         </motion.div>
@@ -380,8 +382,8 @@ export default function MarketplacePage() {
             {/* Stats bar */}
             {stats && (
               <section>
-                <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-4 flex items-center gap-2">
-                  <BarChart3 className="h-3.5 w-3.5" />
+                <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-4 flex items-center gap-2 font-mono">
+                  <BarChart3 className="h-[18px] w-[18px]" />
                   On-Chain Decision Stats
                 </h2>
                 <StatsBar stats={stats} />
@@ -392,8 +394,8 @@ export default function MarketplacePage() {
             <div className="grid gap-10 lg:grid-cols-[1fr_380px]">
               {/* Agent Leaderboard */}
               <section>
-                <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-4 flex items-center gap-2">
-                  <TrendingUp className="h-3.5 w-3.5" />
+                <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-4 flex items-center gap-2 font-mono">
+                  <TrendingUp className="h-[18px] w-[18px]" />
                   Agent Leaderboard
                 </h2>
                 <AgentLeaderboard total={stats?.total ?? 0} />
@@ -401,8 +403,8 @@ export default function MarketplacePage() {
 
               {/* Recent Decisions Feed */}
               <section>
-                <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-4 flex items-center gap-2">
-                  <Activity className="h-3.5 w-3.5" />
+                <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-4 flex items-center gap-2 font-mono">
+                  <Activity className="h-[18px] w-[18px]" />
                   Recent On-Chain Decisions
                   {decisions.length > 0 && (
                     <span className="ml-auto text-zinc-600 text-[10px] font-normal normal-case tracking-normal">
@@ -410,7 +412,7 @@ export default function MarketplacePage() {
                     </span>
                   )}
                 </h2>
-                <Card className="border-zinc-800 bg-zinc-950/40 rounded-[14px]">
+                <Card className="border-[rgba(255,255,255,0.08)] bg-[#111113] rounded-xl">
                   <CardContent className="p-5">
                     <DecisionsFeed decisions={decisions} />
                   </CardContent>
@@ -422,9 +424,9 @@ export default function MarketplacePage() {
             <section className="flex items-center justify-center pt-4">
               <Link
                 href="/demo"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-zinc-100 text-sm font-semibold transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#09090B] hover:bg-zinc-200 text-xs font-semibold hover:scale-[1.01] transition-all duration-200"
               >
-                <Cpu className="h-4 w-4" />
+                <Cpu className="h-[18px] w-[18px]" />
                 Start a New Debate
               </Link>
             </section>

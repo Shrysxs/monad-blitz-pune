@@ -110,28 +110,28 @@ export function AssetSelector({ syndicate, onBack, onStart }: AssetSelectorProps
     <div className="flex flex-col gap-8 w-full max-w-xl mx-auto">
       <button
         onClick={onBack}
-        className="flex items-center gap-2 text-zinc-400 hover:text-zinc-100 text-sm w-fit transition-colors group"
+        className="flex items-center gap-2 text-zinc-400 hover:text-zinc-100 text-xs w-fit transition-colors group font-mono uppercase tracking-wider"
       >
-        <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
+        <ArrowLeft className="h-[18px] w-[18px] group-hover:-translate-x-0.5 transition-transform" />
         Back to Syndicates
       </button>
 
       <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-2 text-purple-400">
-          <Cpu className="h-4 w-4" />
-          <span className="text-xs font-semibold uppercase tracking-wider">Syndicate active</span>
+        <div className="flex items-center gap-2 text-zinc-400">
+          <Cpu className="h-[18px] w-[18px]" />
+          <span className="text-[10px] font-semibold uppercase tracking-widest font-mono">Syndicate active</span>
         </div>
         <h2 className="text-3xl font-semibold tracking-tight text-zinc-100">
           Analyze Asset with {syndicate.name}
         </h2>
-        <p className="text-zinc-400 text-sm">
+        <p className="text-zinc-400 text-sm leading-relaxed">
           Select or search for a real-time cryptocurrency. The syndicate will formulate market indices, independently debate, and record their consensus on Monad.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex flex-col gap-2 relative">
-          <label htmlFor="ticker" className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+          <label htmlFor="ticker" className="text-xs font-semibold text-zinc-500 uppercase tracking-widest font-mono">
             Enter Token Ticker or Name
           </label>
           <div className="flex gap-3 relative">
@@ -145,13 +145,13 @@ export function AssetSelector({ syndicate, onBack, onStart }: AssetSelectorProps
                 onBlur={() => setTimeout(() => setIsFocused(false), 200)} // delay blur to allow suggestion clicks
                 disabled={isLoading}
                 autoComplete="off"
-                className="bg-zinc-950/60 border-zinc-800 text-zinc-100 focus-visible:ring-purple-600 h-12 text-lg rounded-xl w-full"
+                className="w-full"
                 required
               />
               
               {/* Autocomplete Suggestions dropdown */}
               {isFocused && filteredAssets.length > 0 && (
-                <div className="absolute z-10 w-full mt-1.5 bg-zinc-950 border border-zinc-850 rounded-xl overflow-hidden shadow-2xl max-h-64 overflow-y-auto">
+                <div className="absolute z-10 w-full mt-2 bg-[#111113] border border-[rgba(255,255,255,0.08)] rounded-xl overflow-hidden shadow-lg max-h-64 overflow-y-auto">
                   {filteredAssets.map((asset) => (
                     <button
                       key={asset.id}
@@ -160,13 +160,13 @@ export function AssetSelector({ syndicate, onBack, onStart }: AssetSelectorProps
                         setTicker(asset.symbol);
                         onStart(asset.symbol);
                       }}
-                      className="w-full px-4 py-3 text-left hover:bg-purple-950/20 hover:text-zinc-100 transition-colors flex justify-between items-center border-b border-zinc-900 last:border-0"
+                      className="w-full px-4 py-3 text-left hover:bg-[#18181B] hover:text-zinc-100 transition-colors flex justify-between items-center border-b border-[rgba(255,255,255,0.04)] last:border-0"
                     >
                       <div className="flex flex-col">
-                        <span className="text-sm font-semibold text-zinc-200">{asset.name}</span>
-                        <span className="text-[10px] text-zinc-500 uppercase">{asset.id}</span>
+                        <span className="text-xs font-semibold text-zinc-200">{asset.name}</span>
+                        <span className="text-[9px] text-zinc-500 font-mono uppercase mt-0.5">{asset.id}</span>
                       </div>
-                      <Badge variant="secondary" className="bg-zinc-900 border-zinc-800 text-zinc-400 text-xs">
+                      <Badge variant="secondary" className="bg-[#18181B] border-[rgba(255,255,255,0.08)] text-zinc-400 text-[10px] rounded-md px-1.5 py-0.5">
                         {asset.symbol}
                       </Badge>
                     </button>
@@ -178,20 +178,20 @@ export function AssetSelector({ syndicate, onBack, onStart }: AssetSelectorProps
             <Button
               type="submit"
               disabled={isLoading || !ticker.trim()}
-              className="h-12 px-6 rounded-xl font-medium"
+              className="font-medium px-5"
             >
               {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-[18px] w-[18px] animate-spin" />
               ) : (
                 <>
                   Start Debate
-                  <Play className="ml-2 h-4 w-4 fill-current" />
+                  <Play className="ml-2 h-[18px] w-[18px]" />
                 </>
               )}
             </Button>
           </div>
           {isFallback && (
-            <p className="text-xs text-amber-500/80 mt-1 flex items-center gap-1.5 font-mono">
+            <p className="text-[10px] text-amber-500/80 mt-1 flex items-center gap-1.5 font-mono">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
               CoinGecko API rate-limited or offline. Active tradeable assets list running on real offline fallback.
             </p>
@@ -200,7 +200,7 @@ export function AssetSelector({ syndicate, onBack, onStart }: AssetSelectorProps
 
 
         <div className="flex flex-col gap-3">
-          <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+          <span className="text-xs font-semibold text-zinc-500 uppercase tracking-widest font-mono">
             Quick Select
           </span>
           <div className="flex gap-2">
@@ -214,7 +214,7 @@ export function AssetSelector({ syndicate, onBack, onStart }: AssetSelectorProps
                   <Badge
                     key={sym}
                     variant="secondary"
-                    className="px-4 py-2 text-sm bg-zinc-950/40 border-zinc-800 hover:border-purple-500/50 hover:bg-zinc-900/40 cursor-pointer rounded-xl text-zinc-300 hover:text-zinc-100 transition-all duration-200"
+                    className="px-3 py-1.5 text-xs bg-[#111113] border border-[rgba(255,255,255,0.08)] hover:border-zinc-700 hover:bg-[#18181B] cursor-pointer rounded-lg text-zinc-300 hover:text-zinc-100 transition-all duration-200 font-medium"
                     onClick={() => onStart(sym)}
                   >
                     {sym}

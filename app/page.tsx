@@ -21,57 +21,59 @@ export default function LandingPage() {
       <AppHeader />
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-16 px-6 py-16">
         <section className="flex max-w-3xl flex-col gap-6">
-          <Badge variant="default">Monad Blitz Pune · MVP</Badge>
+          <div className="self-start">
+            <Badge variant="default">Monad Blitz Pune · MVP</Badge>
+          </div>
           <h1 className="text-4xl font-semibold tracking-tight text-zinc-50 sm:text-5xl">
             AI Investment Syndicates
           </h1>
-          <p className="text-lg leading-8 text-zinc-400">
+          <p className="text-base text-zinc-400 leading-relaxed">
             Five specialized agents independently analyze an asset, debate their
             views, vote, and permanently record a transparent consensus on Monad.
           </p>
-          <div className="flex flex-wrap gap-3 pt-2">
+          <div className="flex flex-wrap gap-4 pt-2">
             <Button asChild size="lg">
               <Link href="/demo">
                 Launch Demo
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-[18px] w-[18px]" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-zinc-800 hover:bg-zinc-900 text-zinc-300">
+            <Button asChild size="lg" variant="outline">
               <Link href="/marketplace">
                 Agent Reputation
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-[18px] w-[18px]" />
               </Link>
             </Button>
           </div>
         </section>
 
-        <section className="grid gap-4 sm:grid-cols-3">
+        <section className="grid gap-6 sm:grid-cols-3">
           {SYNDICATES.map((syndicate) => (
-            <Card key={syndicate.id}>
-              <CardHeader>
-                <CardTitle>{syndicate.name}</CardTitle>
-                <CardDescription>{syndicate.focus}</CardDescription>
+            <Card key={syndicate.id} className="hover:border-zinc-700/60">
+              <CardHeader className="p-6">
+                <CardTitle className="text-sm font-semibold tracking-tight text-zinc-200">{syndicate.name}</CardTitle>
+                <CardDescription className="text-xs text-zinc-500 mt-1 font-normal">{syndicate.focus}</CardDescription>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-zinc-400">{syndicate.description}</p>
+              <CardContent className="px-6 pb-6 pt-0">
+                <p className="text-sm text-zinc-400 leading-relaxed font-normal">{syndicate.description}</p>
               </CardContent>
             </Card>
           ))}
         </section>
 
-        <section className="flex flex-col gap-4">
-          <div className="flex items-center gap-2 text-zinc-300">
-            <Users className="h-4 w-4 text-purple-400" />
-            <h2 className="text-sm font-medium uppercase tracking-wider">
+        <section className="flex flex-col gap-6">
+          <div className="flex items-center gap-2 text-zinc-400">
+            <Users className="h-[18px] w-[18px]" />
+            <h2 className="text-xs font-semibold uppercase tracking-wider font-mono">
               Five-agent syndicate
             </h2>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {AGENTS.map((agent) => (
-              <Card key={agent.id} className="bg-zinc-950/50">
-                <CardHeader className="p-4">
-                  <CardTitle className="text-base">{agent.name}</CardTitle>
-                  <CardDescription className="text-xs leading-relaxed">
+              <Card key={agent.id} className="hover:border-zinc-700/60">
+                <CardHeader className="p-6">
+                  <CardTitle className="text-sm font-semibold text-zinc-200">{agent.name}</CardTitle>
+                  <CardDescription className="text-xs text-zinc-400 mt-1.5 leading-relaxed font-normal">
                     {agent.focus}
                   </CardDescription>
                 </CardHeader>

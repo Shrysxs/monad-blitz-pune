@@ -53,18 +53,18 @@ export default function DemoPage() {
       <AppHeader />
       
       {/* Step Stepper Header */}
-      <div className="border-b border-zinc-900/60 bg-zinc-950/20 py-4">
+      <div className="border-b border-[rgba(255,255,255,0.08)] bg-[#111113]/30 py-4">
         <div className="mx-auto flex max-w-6xl justify-between items-center px-6">
-          <div className="flex gap-2 text-xs font-medium text-zinc-500 uppercase tracking-wider font-mono">
-            <span className={getStepNumber() === 1 ? "text-purple-400 font-bold" : ""}>1. Syndicate</span>
-            <span>&rarr;</span>
-            <span className={getStepNumber() === 2 ? "text-purple-400 font-bold" : ""}>2. Asset</span>
-            <span>&rarr;</span>
-            <span className={getStepNumber() === 3 ? "text-purple-400 font-bold" : ""}>3. Debate</span>
-            <span>&rarr;</span>
-            <span className={getStepNumber() === 4 ? "text-purple-400 font-bold" : ""}>4. Consensus</span>
-            <span>&rarr;</span>
-            <span className={getStepNumber() === 5 ? "text-purple-400 font-bold" : ""}>5. On-Chain Seal</span>
+          <div className="flex gap-3 text-xs font-mono text-zinc-500 uppercase tracking-widest">
+            <span className={getStepNumber() === 1 ? "text-zinc-100 font-semibold" : ""}>1. Syndicate</span>
+            <span className="text-zinc-800">&rarr;</span>
+            <span className={getStepNumber() === 2 ? "text-zinc-100 font-semibold" : ""}>2. Asset</span>
+            <span className="text-zinc-800">&rarr;</span>
+            <span className={getStepNumber() === 3 ? "text-zinc-100 font-semibold" : ""}>3. Debate</span>
+            <span className="text-zinc-800">&rarr;</span>
+            <span className={getStepNumber() === 4 ? "text-zinc-100 font-semibold" : ""}>4. Consensus</span>
+            <span className="text-zinc-800">&rarr;</span>
+            <span className={getStepNumber() === 5 ? "text-zinc-100 font-semibold" : ""}>5. On-Chain Seal</span>
           </div>
 
           {step !== "select-syndicate" && (
@@ -72,7 +72,7 @@ export default function DemoPage() {
               onClick={handleReset}
               className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono"
             >
-              <RotateCcw className="h-3 w-3" />
+              <RotateCcw className="h-[18px] w-[18px]" />
               Reset Flow
             </button>
           )}
@@ -84,12 +84,12 @@ export default function DemoPage() {
           {/* Error Message */}
           {error && (
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="flex items-center gap-3 border border-red-500/20 bg-red-500/5 text-red-400 text-sm p-4 rounded-xl max-w-2xl mx-auto w-full"
+              className="flex items-center gap-3 border border-red-500/20 bg-red-500/5 text-red-400 text-sm p-4 rounded-lg max-w-2xl mx-auto w-full"
             >
-              <AlertCircle className="h-5 w-5 flex-shrink-0" />
+              <AlertCircle className="h-[18px] w-[18px] flex-shrink-0" />
               <span>{error}</span>
             </motion.div>
           )}
@@ -134,14 +134,14 @@ export default function DemoPage() {
               exit={{ opacity: 0 }}
               className="w-full flex flex-col gap-6"
             >
-              <div className="flex flex-col gap-1 items-center text-center">
-                <span className="text-xs text-purple-400 font-semibold uppercase tracking-wider font-mono">
+              <div className="flex flex-col gap-1 items-start">
+                <span className="text-[10px] text-zinc-500 font-semibold uppercase tracking-widest font-mono">
                   {isAnalyzing ? "Preparing Shared Market Context" : "Syndicate Deliberating"}
                 </span>
-                <h2 className="text-2xl font-bold text-zinc-100">
+                <h2 className="text-2xl font-semibold text-zinc-100 mt-1">
                   {isAnalyzing ? "Synthesizing News & Ledger Metrics..." : `Committee Deliberation: ${asset}`}
                 </h2>
-                <p className="text-xs text-zinc-500 max-w-sm mt-1">
+                <p className="text-xs text-zinc-400 max-w-xl mt-1 leading-relaxed">
                   Each agent evaluates the asset independently from their distinct philosophy. Revealing arguments...
                 </p>
               </div>
@@ -163,33 +163,39 @@ export default function DemoPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="w-full flex flex-col gap-10"
+              className="w-full flex flex-col gap-8"
             >
-              <div className="flex flex-col gap-1 items-center text-center">
-                <span className="text-xs text-emerald-400 font-semibold uppercase tracking-wider font-mono">
+              <div className="flex flex-col gap-1 items-start">
+                <span className="text-[10px] text-zinc-500 font-semibold uppercase tracking-widest font-mono">
                   Deliberation Concluded
                 </span>
-                <h2 className="text-2xl font-bold text-zinc-100">
+                <h2 className="text-2xl font-semibold text-zinc-100 mt-1">
                   Consensus Summary
                 </h2>
               </div>
 
-              <DebateArena
-                marketContext={marketContext}
-                agentResponses={agentResponses}
-                revealedCount={revealedCount}
-                isAnalyzing={false}
-                onChainMetrics={onChainMetrics}
-              />
+              <div className="grid gap-10 lg:grid-cols-[1fr_380px] items-start">
+                <div className="flex flex-col gap-6">
+                  <DebateArena
+                    marketContext={marketContext}
+                    agentResponses={agentResponses}
+                    revealedCount={revealedCount}
+                    isAnalyzing={false}
+                    onChainMetrics={onChainMetrics}
+                  />
+                </div>
 
-              <ConsensusPanel
-                consensus={consensus!}
-                syndicate={selectedSyndicate!}
-                asset={asset}
-                isWritingContract={isWritingContract}
-                onRecord={handleRecordOnChain}
-                onReset={handleReset}
-              />
+                <div className="flex flex-col gap-6">
+                  <ConsensusPanel
+                    consensus={consensus!}
+                    syndicate={selectedSyndicate!}
+                    asset={asset}
+                    isWritingContract={isWritingContract}
+                    onRecord={handleRecordOnChain}
+                    onReset={handleReset}
+                  />
+                </div>
+              </div>
             </motion.div>
           )}
 
@@ -200,33 +206,39 @@ export default function DemoPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="w-full flex flex-col gap-10"
+              className="w-full flex flex-col gap-8"
             >
-              <div className="flex flex-col gap-1 items-center text-center">
-                <span className="text-xs text-emerald-400 font-semibold uppercase tracking-wider font-mono">
+              <div className="flex flex-col gap-1 items-start">
+                <span className="text-[10px] text-emerald-500 font-semibold uppercase tracking-widest font-mono">
                   Sealed on Monad
                 </span>
-                <h2 className="text-2xl font-bold text-zinc-100">
+                <h2 className="text-2xl font-semibold text-zinc-100 mt-1">
                   Transaction Sealed
                 </h2>
               </div>
 
-              <SuccessModal
-                txHash={txHash}
-                consensus={consensus}
-                syndicate={selectedSyndicate}
-                asset={asset}
-                isSimulated={isSimulated}
-                onReset={handleReset}
-              />
+              <div className="grid gap-10 lg:grid-cols-[1fr_380px] items-start">
+                <div className="flex flex-col gap-6">
+                  <DebateArena
+                    marketContext={marketContext}
+                    agentResponses={agentResponses}
+                    revealedCount={revealedCount}
+                    isAnalyzing={false}
+                    onChainMetrics={onChainMetrics}
+                  />
+                </div>
 
-              <DebateArena
-                marketContext={marketContext}
-                agentResponses={agentResponses}
-                revealedCount={revealedCount}
-                isAnalyzing={false}
-                onChainMetrics={onChainMetrics}
-              />
+                <div className="flex flex-col gap-6">
+                  <SuccessModal
+                    txHash={txHash}
+                    consensus={consensus}
+                    syndicate={selectedSyndicate}
+                    asset={asset}
+                    isSimulated={isSimulated}
+                    onReset={handleReset}
+                  />
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

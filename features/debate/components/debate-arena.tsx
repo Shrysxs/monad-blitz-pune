@@ -61,45 +61,45 @@ export function DebateArena({
     <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto">
       {/* 1. Shared Market Context Banner */}
       {!marketContext ? (
-        <div className="border border-zinc-800/80 bg-zinc-950/40 rounded-[16px] p-6 flex items-center justify-center min-h-[90px] animate-pulse">
+        <div className="border border-[rgba(255,255,255,0.08)] bg-[#111113] rounded-xl p-6 flex items-center justify-center min-h-[90px] animate-pulse">
           <div className="flex items-center gap-3 text-zinc-500 font-mono text-xs">
-            <span className="h-2 w-2 rounded-full bg-purple-500 animate-ping" />
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
             <span>Fetching real-time market indices & query ledger events from Monad Network...</span>
           </div>
         </div>
       ) : (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="border border-zinc-800/80 bg-zinc-950/40 rounded-[16px] p-6 grid gap-6 md:grid-cols-4 items-center"
+          className="border border-[rgba(255,255,255,0.08)] bg-[#111113] rounded-xl p-6 grid gap-6 md:grid-cols-4 items-center"
         >
-          <div className="flex flex-col gap-1 border-b md:border-b-0 md:border-r border-zinc-800/80 pb-4 md:pb-0">
-            <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">Shared Market Context</span>
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-2xl font-semibold text-zinc-100">{marketContext.asset}</h3>
+          <div className="flex flex-col gap-1 border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.08)] pb-4 md:pb-0">
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest font-mono">Shared Market Context</span>
+            <div className="flex items-baseline gap-2 mt-1">
+              <h3 className="text-lg font-semibold text-zinc-100">{marketContext.asset}</h3>
               <span className="text-xs text-zinc-400 font-mono">${marketContext.price.toLocaleString()}</span>
             </div>
-            <span className={`text-xs font-semibold ${marketContext.change24h >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+            <span className={`text-xs font-semibold mt-1 ${marketContext.change24h >= 0 ? "text-emerald-500" : "text-red-500"}`}>
               {marketContext.change24h >= 0 ? "+" : ""}{marketContext.change24h}% (24h)
             </span>
           </div>
 
-          <div className="flex flex-col gap-1 border-b md:border-b-0 md:border-r border-zinc-800/80 pb-4 md:pb-0 md:pl-4">
-            <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">Fear & Greed Index</span>
-            <span className="text-lg font-semibold text-zinc-100">{marketContext.fearGreedIndex}</span>
-            <span className="text-xs text-zinc-400">Category: {marketContext.fearGreedIndex >= 70 ? "Greed" : marketContext.fearGreedIndex <= 30 ? "Fear" : "Neutral"}</span>
+          <div className="flex flex-col gap-1 border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.08)] pb-4 md:pb-0 md:pl-4">
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest font-mono">Fear & Greed Index</span>
+            <span className="text-lg font-semibold text-zinc-100 mt-1">{marketContext.fearGreedIndex}</span>
+            <span className="text-xs text-zinc-400 mt-1">Category: {marketContext.fearGreedIndex >= 70 ? "Greed" : marketContext.fearGreedIndex <= 30 ? "Fear" : "Neutral"}</span>
           </div>
 
-          <div className="flex flex-col gap-1 border-b md:border-b-0 md:border-r border-zinc-800/80 pb-4 md:pb-0 md:pl-4">
-            <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">Aggregate Sentiment</span>
-            <span className="text-lg font-semibold text-zinc-100">{marketContext.sentiment}</span>
-            <span className="text-xs text-zinc-400">Volume 24h: {marketContext.volume24h}</span>
+          <div className="flex flex-col gap-1 border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.08)] pb-4 md:pb-0 md:pl-4">
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest font-mono">Aggregate Sentiment</span>
+            <span className="text-lg font-semibold text-zinc-100 mt-1">{marketContext.sentiment}</span>
+            <span className="text-xs text-zinc-400 mt-1">Volume 24h: {marketContext.volume24h}</span>
           </div>
 
           <div className="flex flex-col gap-1 md:pl-4">
-            <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">On-Chain Ledger</span>
-            <span className="text-xs text-zinc-300 truncate">{onChainMetrics?.whaleAccumulation || "Loading metrics..."}</span>
-            <span className="text-[10px] text-purple-400 font-mono">Monad Testnet (Chain ID 10143)</span>
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest font-mono">On-Chain Ledger</span>
+            <span className="text-xs text-zinc-300 truncate mt-1">{onChainMetrics?.whaleAccumulation || "Loading metrics..."}</span>
+            <span className="text-[10px] text-zinc-500 font-mono mt-1">Monad Testnet (Chain ID 10143)</span>
           </div>
         </motion.div>
       )}
@@ -114,27 +114,30 @@ export function DebateArena({
           return (
             <Card
               key={agent.id}
-              className={`relative overflow-hidden border transition-all duration-300 rounded-[16px] min-h-[340px] flex flex-col ${
+              className={`relative overflow-hidden border transition-all duration-200 rounded-xl min-h-[340px] flex flex-col ${
                 isRevealed
-                  ? "border-zinc-800 bg-zinc-950/40"
+                  ? "border-[rgba(255,255,255,0.08)] bg-[#111113]"
                   : isCurrentThinking
-                  ? "border-purple-500 bg-zinc-950/60 shadow-[0_0_15px_rgba(147,51,234,0.15)]"
-                  : "border-zinc-900 bg-zinc-950/10 opacity-30 select-none"
+                  ? "border-zinc-500 bg-[#18181B] shadow-sm"
+                  : "border-[rgba(255,255,255,0.08)] bg-[#111113] opacity-30 select-none"
               }`}
             >
               {/* Card Header */}
-              <CardHeader className="p-5 border-b border-zinc-900/60 pb-3 flex flex-row items-start justify-between space-y-0 gap-2">
-                <div className="flex flex-col gap-1 min-w-0 flex-1">
-                  <CardTitle className="text-base text-zinc-100 font-semibold">{agent.name}</CardTitle>
-                  <span className="text-[11px] text-zinc-400 font-medium leading-tight">
-                    {agent.focus}
-                  </span>
-                  <span className="text-[10px] text-purple-400 font-mono lowercase tracking-wider">
-                    always: {agent.mustAlways}
-                  </span>
+              <CardHeader className="p-6 border-b border-[rgba(255,255,255,0.08)] flex flex-row items-start justify-between space-y-0 gap-3">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  {/* Analyst Profile Initials Avatar */}
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-800 border border-[rgba(255,255,255,0.08)] text-zinc-300 font-mono text-xs font-semibold">
+                    {agent.name.split(" ").map(w => w[0]).join("")}
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <CardTitle className="text-sm font-semibold text-zinc-100 truncate">{agent.name}</CardTitle>
+                    <span className="text-[11px] text-zinc-500 truncate mt-0.5">
+                      {agent.focus}
+                    </span>
+                  </div>
                 </div>
                 {isRevealed && response && (
-                  <Badge variant={response.decision.toLowerCase() as "buy" | "sell" | "hold"} className="px-2 py-0.5 text-xs font-semibold rounded-md shrink-0">
+                  <Badge variant={response.decision.toLowerCase() as "buy" | "sell" | "hold"} className="px-2 py-0.5 text-[10px] font-semibold rounded-md shrink-0">
                     {response.decision}
                   </Badge>
                 )}
@@ -197,9 +200,9 @@ export function DebateArena({
                     <ThinkingLog agentId={agent.id} />
                   ) : (
                     /* Waiting Queue State */
-                    <div className="flex flex-col items-center justify-center h-full my-auto text-zinc-600 gap-2">
-                      <Terminal className="h-6 w-6 stroke-[1.5]" />
-                      <span className="text-xs">Awaiting context logs...</span>
+                    <div className="flex flex-col items-center justify-center h-full my-auto text-zinc-600 gap-2 py-16">
+                      <Terminal className="h-[18px] w-[18px] stroke-[1.5]" />
+                      <span className="text-xs font-mono">Awaiting context logs...</span>
                     </div>
                   )}
                 </AnimatePresence>
@@ -229,18 +232,18 @@ function ThinkingLog({ agentId }: { agentId: AgentId }) {
       animate={{ opacity: 1 }}
       className="flex flex-col h-full font-mono text-[10px] text-zinc-400 gap-3 justify-center py-6"
     >
-      <div className="flex items-center gap-2 text-purple-400">
-        <Cpu className="h-4 w-4 animate-pulse" />
-        <span className="font-semibold uppercase tracking-wider">Deliberating...</span>
+      <div className="flex items-center gap-2 text-zinc-400">
+        <Cpu className="h-[18px] w-[18px] animate-pulse" />
+        <span className="font-semibold uppercase tracking-widest text-[9px]">Deliberating...</span>
       </div>
 
-      <div className="flex flex-col gap-1 bg-zinc-950/80 p-3 rounded-lg border border-zinc-900/50 min-h-[100px] justify-end">
+      <div className="flex flex-col gap-1 bg-[#09090B] p-3 rounded-lg border border-[rgba(255,255,255,0.08)] min-h-[100px] justify-end">
         {logs.slice(0, logIndex + 1).map((log, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, x: -5 }}
             animate={{ opacity: 1, x: 0 }}
-            className={`truncate ${i === logIndex ? "text-purple-300" : "text-zinc-600"}`}
+            className={`truncate ${i === logIndex ? "text-zinc-300" : "text-zinc-500"}`}
           >
             &gt; {log}
           </motion.div>
